@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://i-mijan.github.io/recursos-educativos/sitemap.xml
