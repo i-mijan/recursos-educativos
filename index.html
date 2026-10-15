@@ -85,7 +85,8 @@ main {
     line-height: 1.6;
 }
 
-/* BUSCADOR */
+
+/* BUSCADOR Y FILTROS */
 
 .search-area {
     background: white;
@@ -103,8 +104,6 @@ main {
     font-size: 1rem;
     margin-bottom: 22px;
 }
-
-/* FILTROS */
 
 .filter-groups {
     display: grid;
@@ -135,6 +134,7 @@ main {
     color: #6b7280;
     font-size: 0.9rem;
 }
+
 
 /* RECURSOS */
 
@@ -214,6 +214,7 @@ main {
     margin-top: 25px;
 }
 
+
 /* PIE */
 
 footer {
@@ -228,6 +229,7 @@ footer {
 footer strong {
     color: white;
 }
+
 
 /* MÓVIL */
 
@@ -248,7 +250,9 @@ footer strong {
 </style>
 </head>
 
+
 <body>
+
 
 <header>
 
@@ -271,8 +275,11 @@ footer strong {
     <div class="nav-content">
 
         <a href="#inicio">Inicio</a>
+
         <a href="#historia">Historia</a>
+
         <a href="#geografia">Geografía</a>
+
         <a href="#economia">Economía</a>
 
     </div>
@@ -295,9 +302,10 @@ footer strong {
 </section>
 
 
-<!-- BUSCADOR Y FILTROS -->
+<!-- BUSCADOR -->
 
 <section class="search-area">
+
 
     <input
         type="text"
@@ -308,6 +316,8 @@ footer strong {
 
     <div class="filter-groups">
 
+
+        <!-- MATERIA -->
 
         <div class="filter-group">
 
@@ -337,6 +347,8 @@ footer strong {
 
         </div>
 
+
+        <!-- CURSO -->
 
         <div class="filter-group">
 
@@ -375,6 +387,8 @@ footer strong {
         </div>
 
 
+        <!-- TIPO -->
+
         <div class="filter-group">
 
             <label for="type">
@@ -399,6 +413,10 @@ footer strong {
                     Infografía
                 </option>
 
+                <option value="comparador">
+                    Comparador
+                </option>
+
                 <option value="simulacion">
                     Simulación
                 </option>
@@ -415,10 +433,12 @@ footer strong {
 
 
     <div class="counter" id="counter">
-        1 recurso
+        4 recursos
     </div>
 
+
 </section>
+
 
 
 <!-- =========================
@@ -427,6 +447,7 @@ footer strong {
 
 <section id="historia">
 
+
     <h2 class="section-title">
         Historia
     </h2>
@@ -434,6 +455,8 @@ footer strong {
 
     <div class="resources">
 
+
+        <!-- IMPERIALISMO -->
 
         <article
             class="resource-card"
@@ -444,17 +467,11 @@ footer strong {
 
             <div class="tags">
 
-                <span class="tag">
-                    Historia
-                </span>
+                <span class="tag">Historia</span>
 
-                <span class="tag">
-                    4º ESO
-                </span>
+                <span class="tag">4º ESO</span>
 
-                <span class="tag">
-                    Atlas
-                </span>
+                <span class="tag">Atlas</span>
 
             </div>
 
@@ -482,9 +499,139 @@ footer strong {
         </article>
 
 
+
+        <!-- PRIMERA GUERRA MUNDIAL -->
+
+        <article
+            class="resource-card"
+            data-subject="historia"
+            data-course="4eso"
+            data-type="atlas"
+        >
+
+            <div class="tags">
+
+                <span class="tag">Historia</span>
+
+                <span class="tag">4º ESO</span>
+
+                <span class="tag">Atlas</span>
+
+            </div>
+
+
+            <h3>
+                Atlas de la Primera Guerra Mundial
+            </h3>
+
+
+            <p>
+                Atlas virtual para explorar el desarrollo de
+                la Primera Guerra Mundial, sus principales
+                frentes, protagonistas y acontecimientos.
+            </p>
+
+
+            <a
+                class="open-button"
+                href="historia/primera-guerra-mundial/"
+            >
+                Abrir recurso →
+            </a>
+
+        </article>
+
+
+
+        <!-- GUERRA FRÍA -->
+
+        <article
+            class="resource-card"
+            data-subject="historia"
+            data-course="4eso"
+            data-type="atlas"
+        >
+
+            <div class="tags">
+
+                <span class="tag">Historia</span>
+
+                <span class="tag">4º ESO</span>
+
+                <span class="tag">Atlas</span>
+
+            </div>
+
+
+            <h3>
+                Atlas de la Guerra Fría
+            </h3>
+
+
+            <p>
+                Atlas interactivo para explorar la división
+                del mundo en bloques, los principales conflictos,
+                alianzas y acontecimientos de la Guerra Fría.
+            </p>
+
+
+            <a
+                class="open-button"
+                href="historia/guerra-fria/"
+            >
+                Abrir recurso →
+            </a>
+
+        </article>
+
+
+
+        <!-- REGÍMENES POLÍTICOS -->
+
+        <article
+            class="resource-card"
+            data-subject="historia"
+            data-course="4eso"
+            data-type="comparador"
+        >
+
+            <div class="tags">
+
+                <span class="tag">Historia</span>
+
+                <span class="tag">4º ESO</span>
+
+                <span class="tag">Comparador</span>
+
+            </div>
+
+
+            <h3>
+                Comparador de regímenes políticos
+            </h3>
+
+
+            <p>
+                Herramienta interactiva para comparar las
+                características de diferentes sistemas y
+                regímenes políticos.
+            </p>
+
+
+            <a
+                class="open-button"
+                href="historia/regimenes-politicos/"
+            >
+                Abrir recurso →
+            </a>
+
+        </article>
+
+
     </div>
 
 </section>
+
 
 
 <!-- =========================
@@ -497,14 +644,14 @@ footer strong {
         Geografía
     </h2>
 
-
     <div class="resources">
 
-        <!-- Los próximos recursos de Geografía irán aquí -->
+        <!-- Próximos recursos -->
 
     </div>
 
 </section>
+
 
 
 <!-- =========================
@@ -517,14 +664,14 @@ footer strong {
         Economía y educación financiera
     </h2>
 
-
     <div class="resources">
 
-        <!-- Los próximos recursos de Economía irán aquí -->
+        <!-- Próximos recursos -->
 
     </div>
 
 </section>
+
 
 
 <div class="empty" id="empty">
@@ -538,6 +685,7 @@ footer strong {
 </main>
 
 
+
 <footer>
 
     <strong>
@@ -549,6 +697,7 @@ footer strong {
     Materiales educativos interactivos para el aula.
 
 </footer>
+
 
 
 <script>
@@ -582,29 +731,37 @@ function updateResources() {
         .toLowerCase()
         .trim();
 
+
     const subject =
         subjectSelect.value;
+
 
     const course =
         courseSelect.value;
 
+
     const type =
         typeSelect.value;
+
 
     let visible = 0;
 
 
     cards.forEach(card => {
 
+
         const text =
             card.textContent
             .toLowerCase();
 
+
         const cardSubject =
             card.dataset.subject;
 
+
         const cardCourse =
             card.dataset.course;
+
 
         const cardType =
             card.dataset.type;
@@ -613,13 +770,16 @@ function updateResources() {
         const matchesSearch =
             text.includes(searchText);
 
+
         const matchesSubject =
             subject === "todos" ||
             cardSubject === subject;
 
+
         const matchesCourse =
             course === "todos" ||
             cardCourse === course;
+
 
         const matchesType =
             type === "todos" ||
@@ -665,15 +825,18 @@ searchInput.addEventListener(
     updateResources
 );
 
+
 subjectSelect.addEventListener(
     "change",
     updateResources
 );
 
+
 courseSelect.addEventListener(
     "change",
     updateResources
 );
+
 
 typeSelect.addEventListener(
     "change",
@@ -684,6 +847,7 @@ typeSelect.addEventListener(
 updateResources();
 
 </script>
+
 
 </body>
 </html>
