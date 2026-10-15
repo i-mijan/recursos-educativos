@@ -1,11 +1,86 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Recursos educativos · Ismael Miján</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Recursos educativos de Geografía, Historia y Economía | Ismael Miján
+  </title>
+
+  <meta
+    name="description"
+    content="Recursos educativos interactivos de Geografía, Historia y Economía para ESO y Bachillerato: atlas históricos, mapas, simuladores y herramientas para el aula."
+  >
+
+  <meta
+    name="robots"
+    content="index, follow"
+  >
+
+  <meta
+    name="author"
+    content="Ismael Miján"
+  >
+
+  <meta
+    name="theme-color"
+    content="#172554"
+  >
+
+  <link
+    rel="canonical"
+    href="https://i-mijan.github.io/recursos-educativos/"
+  >
+
+  <!-- Open Graph -->
+
+  <meta
+    property="og:type"
+    content="website"
+  >
+
+  <meta
+    property="og:title"
+    content="Recursos educativos de Geografía, Historia y Economía | Ismael Miján"
+  >
+
+  <meta
+    property="og:description"
+    content="Recursos educativos interactivos para Geografía, Historia y Economía en ESO y Bachillerato."
+  >
+
+  <meta
+    property="og:url"
+    content="https://i-mijan.github.io/recursos-educativos/"
+  >
+
+  <meta
+    property="og:site_name"
+    content="Recursos educativos · Ismael Miján"
+  >
+
+  <!-- Datos estructurados -->
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Recursos educativos · Ismael Miján",
+    "url": "https://i-mijan.github.io/recursos-educativos/",
+    "description": "Recursos educativos interactivos de Geografía, Historia y Economía para ESO y Bachillerato.",
+    "author": {
+      "@type": "Person",
+      "name": "Ismael Miján"
+    },
+    "inLanguage": "es"
+  }
+  </script>
+
 
   <style>
     * {
@@ -55,7 +130,7 @@
 
     header p {
       margin: 0;
-      max-width: 700px;
+      max-width: 760px;
       font-size: 1.12rem;
       opacity: 0.9;
     }
@@ -66,6 +141,23 @@
       max-width: 1200px;
       margin: 0 auto;
       padding: 34px 20px 60px;
+    }
+
+    .intro {
+      max-width: 900px;
+      margin: 0 auto 30px;
+      color: #4b5563;
+      font-size: 1rem;
+    }
+
+    .intro h2 {
+      margin: 0 0 10px;
+      color: #111827;
+      font-size: 1.45rem;
+    }
+
+    .intro p {
+      margin: 0;
     }
 
     /* FILTROS */
@@ -295,20 +387,23 @@
   </style>
 </head>
 
+
 <body>
 
 <header>
   <div class="header-inner">
 
     <div class="header-kicker">
-      Materiales interactivos
+      Materiales educativos interactivos
     </div>
 
-    <h1>Recursos educativos</h1>
+    <h1>
+      Recursos educativos de Geografía, Historia y Economía
+    </h1>
 
     <p>
-      Herramientas y recursos interactivos para Geografía,
-      Historia y Economía.
+      Atlas, mapas, simuladores y herramientas interactivas
+      para trabajar contenidos de ESO y Bachillerato.
     </p>
 
   </div>
@@ -317,28 +412,56 @@
 
 <main>
 
+  <!-- INTRODUCCIÓN -->
+
+  <section class="intro">
+
+    <h2>
+      Recursos educativos interactivos para el aula
+    </h2>
+
+    <p>
+      Colección de recursos digitales para la enseñanza de
+      Geografía, Historia y Economía. Incluye atlas históricos,
+      mapas interactivos, herramientas de análisis y simuladores
+      pensados para facilitar la exploración y comprensión de
+      los contenidos de Ciencias Sociales en ESO y Bachillerato.
+    </p>
+
+  </section>
+
+
   <!-- BUSCADOR Y FILTROS -->
 
-  <section class="controls">
+  <section
+    class="controls"
+    aria-label="Buscador y filtros de recursos"
+  >
 
     <input
       type="search"
       id="search"
       class="search"
       placeholder="🔎 Buscar un recurso..."
-      aria-label="Buscar recursos"
+      aria-label="Buscar recursos educativos"
     >
 
     <div class="filters">
 
-      <select id="subject">
+      <select
+        id="subject"
+        aria-label="Filtrar por materia"
+      >
         <option value="">Todas las materias</option>
         <option value="Historia">🏛️ Historia</option>
         <option value="Geografía">🌍 Geografía</option>
         <option value="Economía">💶 Economía</option>
       </select>
 
-      <select id="course">
+      <select
+        id="course"
+        aria-label="Filtrar por curso"
+      >
         <option value="">Todos los cursos</option>
         <option value="1º ESO">1º ESO</option>
         <option value="2º ESO">2º ESO</option>
@@ -347,7 +470,10 @@
         <option value="Bachillerato">Bachillerato</option>
       </select>
 
-      <select id="type">
+      <select
+        id="type"
+        aria-label="Filtrar por tipo de recurso"
+      >
         <option value="">Todos los tipos</option>
         <option value="Atlas">Atlas</option>
         <option value="Mapa">Mapa</option>
@@ -359,7 +485,11 @@
 
     </div>
 
-    <div class="results-info" id="resultsInfo">
+    <div
+      class="results-info"
+      id="resultsInfo"
+      aria-live="polite"
+    >
       7 recursos
     </div>
 
@@ -368,7 +498,11 @@
 
   <!-- RECURSOS -->
 
-  <section class="resources" id="resources">
+  <section
+    class="resources"
+    id="resources"
+    aria-label="Recursos educativos"
+  >
 
 
     <!-- ================= HISTORIA ================= -->
@@ -380,7 +514,7 @@
       data-type="Atlas"
     >
 
-      <div class="card-top">🏛️</div>
+      <div class="card-top" aria-hidden="true">🏛️</div>
 
       <span class="type">Atlas</span>
 
@@ -414,7 +548,7 @@
       data-type="Atlas"
     >
 
-      <div class="card-top">⚔️</div>
+      <div class="card-top" aria-hidden="true">⚔️</div>
 
       <span class="type">Atlas</span>
 
@@ -449,7 +583,7 @@
       data-type="Atlas"
     >
 
-      <div class="card-top">☢️</div>
+      <div class="card-top" aria-hidden="true">☢️</div>
 
       <span class="type">Atlas</span>
 
@@ -483,7 +617,7 @@
       data-type="Comparador"
     >
 
-      <div class="card-top">⚖️</div>
+      <div class="card-top" aria-hidden="true">⚖️</div>
 
       <span class="type">Comparador</span>
 
@@ -519,7 +653,7 @@
       data-type="Atlas"
     >
 
-      <div class="card-top">🌍</div>
+      <div class="card-top" aria-hidden="true">🌍</div>
 
       <span class="type">Atlas</span>
 
@@ -553,7 +687,7 @@
       data-type="Atlas"
     >
 
-      <div class="card-top">🚢</div>
+      <div class="card-top" aria-hidden="true">🚢</div>
 
       <span class="type">Atlas</span>
 
@@ -589,7 +723,7 @@
       data-type="Simulación"
     >
 
-      <div class="card-top">💶</div>
+      <div class="card-top" aria-hidden="true">💶</div>
 
       <span class="type">Simulación</span>
 
@@ -617,7 +751,11 @@
     </article>
 
 
-    <div class="no-results" id="noResults">
+    <div
+      class="no-results"
+      id="noResults"
+      aria-live="polite"
+    >
       No se han encontrado recursos que coincidan con los filtros seleccionados.
     </div>
 
@@ -682,11 +820,6 @@
         !subject ||
         cardSubject === subject;
 
-
-      /*
-        Permite que un recurso pueda pertenecer
-        a más de un curso.
-      */
 
       const matchesCourse =
         !course ||
@@ -757,4 +890,3 @@
 
 </body>
 </html>
-```
