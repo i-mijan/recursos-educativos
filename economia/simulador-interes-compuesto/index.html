@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Interés Compuesto</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #f5f5f3; color: #1a1a18; min-height: 100vh; padding: 2rem 1rem; }
+  .container { max-width: 820px; margin: 0 auto; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #5f5e5a; margin-bottom: 2rem; }
+  .card { background: #fff; border-radius: 12px; border: 0.5px solid #d3d1c7; padding: 1.5rem; margin-bottom: 1.25rem; }
+  .card-title { font-size: 12px; font-weight: 500; color: #888780; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem; }
+  .asset-selector label { display: block; font-size: 13px; color: #5f5e5a; margin-bottom: 6px; }
+  .asset-selector select { width: 100%; padding: 9px 12px; border: 0.5px solid #d3d1c7; border-radius: 8px; font-size: 14px; background: #fff; color: #1a1a18; cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888780' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
+  .asset-selector select:focus { border-color: #888780; }
+  .asset-info { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; min-height: 26px; }
+  .badge { font-size: 12px; padding: 4px 10px; border-radius: 6px; }
+  .badge-ret  { background: #e1f5ee; color: #0f6e56; }
+  .badge-per  { background: #e6f1fb; color: #185FA5; }
+  .badge-note { background: #f1efe8; color: #5f5e5a; font-style: italic; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 13px; color: #5f5e5a; }
+  .field input[type=number] { width: 100%; padding: 8px 10px; border: 0.5px solid #d3d1c7; border-radius: 8px; font-size: 15px; background: #fff; color: #1a1a18; outline: none; }
+  .field input[type=number]:focus { border-color: #888780; }
+  .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .slider-row:last-child { margin-bottom: 0; }
+  .slider-row label { font-size: 13px; color: #5f5e5a; min-width: 170px; }
+  .slider-row input[type=range] { flex: 1; cursor: pointer; }
+  .slider-val { font-size: 14px; font-weight: 500; min-width: 65px; text-align: right; color: #1a1a18; }
+  #ret { accent-color: #185FA5; }
+  #fee { accent-color: #D85A30; }
+  #yrs { accent-color: #1D9E75; }
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+  .metric { background: #f1efe8; border-radius: 8px; padding: 14px 12px; }
+  .metric .mlabel { font-size: 12px; color: #5f5e5a; margin-bottom: 4px; }
+  .metric .mval { font-size: 19px; font-weight: 500; }
+  .mval.pos { color: #0f6e56; } .mval.neg { color: #993c1d; } .mval.neu { color: #1a1a18; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 10px; font-size: 12px; color: #5f5e5a; }
+  .legend span { display: flex; align-items: center; gap: 5px; }
+  .dot { width: 10px; height: 10px; border-radius: 2px; }
+  .chart-wrap { position: relative; width: 100%; height: 340px; }
+  .note { padding: 12px 14px; background: #f1efe8; border-radius: 8px; font-size: 13px; color: #5f5e5a; line-height: 1.6; }
+  .note strong { color: #1a1a18; font-weight: 500; }
+  #hist-note { display: none; margin-bottom: 1.25rem; padding: 10px 14px; background: #faeeda; border-radius: 8px; font-size: 13px; color: #633806; line-height: 1.5; }
+  @media (max-width: 540px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .slider-row label { min-width: 120px; font-size: 12px; }
+    .metric .mval { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Simulador de interés compuesto</h1>
+  <p class="subtitle">Aportaciones periódicas · Rentabilidad histórica por índice · Coste de comisiones</p>
+
+  <div class="card">
+    <div class="card-title">Activo de referencia</div>
+    <div class="asset-selector" style="margin-bottom:1.25rem;">
+      <label>Selecciona un índice o configura manualmente</label>
+      <select id="asset-select">
+        <option value="custom">— Configuración manual —</option>
+        <option value="sp500" selected>S&amp;P 500</option>
+        <option value="msciworld">MSCI World</option>
+        <option value="msciacwi">MSCI ACWI</option>
+        <option value="stoxx600">Euro Stoxx 600</option>
+        <option value="ibex35">IBEX 35</option>
+        <option value="nikkei">Nikkei 225</option>
+      </select>
+      <div class="asset-info" id="asset-info"></div>
+    </div>
+
+    <div class="card-title">Parámetros de inversión</div>
+    <div class="grid-2" style="margin-bottom:1.25rem;">
+      <div class="field">
+        <label>Aportación inicial (€)</label>
+        <input type="number" id="ini" value="10000" min="0" step="500">
+      </div>
+      <div class="field">
+        <label>Aportación mensual (€)</label>
+        <input type="number" id="monthly" value="300" min="0" step="50">
+      </div>
+    </div>
+    <div class="slider-row">
+      <label>Rentabilidad anual (nominal)</label>
+      <input type="range" id="ret" min="0" max="15" step="0.5" value="10">
+      <span class="slider-val" id="ret-v">10.0%</span>
+    </div>
+    <div class="slider-row">
+      <label>Comisión anual (TER)</label>
+      <input type="range" id="fee" min="0" max="2.5" step="0.05" value="0.20">
+      <span class="slider-val" id="fee-v">0.20%</span>
+    </div>
+    <div class="slider-row">
+      <label>Horizonte temporal</label>
+      <input type="range" id="yrs" min="1" max="35" step="1" value="20">
+      <span class="slider-val" id="yrs-v">20 años</span>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="mlabel">Capital invertido</div><div class="mval neu" id="m-inv">—</div></div>
+    <div class="metric"><div class="mlabel">Valor final neto</div><div class="mval pos" id="m-final">—</div></div>
+    <div class="metric"><div class="mlabel">Ganancia neta</div><div class="mval pos" id="m-gain">—</div></div>
+    <div class="metric"><div class="mlabel">Coste comisiones</div><div class="mval neg" id="m-fee">—</div></div>
+  </div>
+
+  <div id="hist-note"></div>
+
+  <div class="card">
+    <div class="card-title">Evolución del patrimonio</div>
+    <div class="legend" id="legend">
+      <span><span class="dot" style="background:#185FA5;"></span>Proyección s/comisiones</span>
+      <span><span class="dot" style="background:#1D9E75;"></span>Proyección c/comisiones</span>
+      <span><span class="dot" style="background:#D85A30; opacity:0.6;"></span>Capital aportado</span>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart" role="img" aria-label="Gráfico de evolución del patrimonio"></canvas>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Nota:</strong> Rentabilidades históricas nominales (sin descontar inflación) en términos de retorno total anual hasta 2024. La proyección CAGR es la media geométrica histórica del índice. Las rentabilidades pasadas no garantizan resultados futuros.
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const ASSETS = {
+  custom:    { name: null },
+  sp500:     { name:'S&P 500',        ret:10.0, period:'1990–2024', note:'Mayor mercado de renta variable del mundo' },
+  msciworld: { name:'MSCI World',     ret:8.5,  period:'1990–2024', note:'23 países desarrollados, ~1.500 empresas' },
+  msciacwi:  { name:'MSCI ACWI',      ret:8.0,  period:'1990–2024', note:'Incluye mercados emergentes (~11.000 empresas)' },
+  stoxx600:  { name:'Euro Stoxx 600', ret:7.5,  period:'1990–2024', note:'600 mayores empresas europeas' },
+  ibex35:    { name:'IBEX 35',        ret:5.5,  period:'1992–2024', note:'Afectado por crisis 2008 y deuda soberana' },
+  nikkei:    { name:'Nikkei 225',     ret:4.0,  period:'1990–2024', note:'Penalizado por la burbuja de 1989' },
+};
+
+// Nominal total annual returns (%) — approximate historical data
+const HIST = {
+  sp500: {
+    start: 1990,
+    r: [-3,30,7,10,1,37,23,33,28,21,-9,-12,-22,29,11,5,16,5,-37,26,15,2,16,32,14,1,12,22,-4,31,18,29,-18,26,25]
+  },
+  msciworld: {
+    start: 1990,
+    r: [-17,19,-5,23,5,21,14,16,24,25,-13,-16,-19,34,15,10,20,9,-40,30,12,-5,16,27,5,-1,8,23,-8,28,16,22,-18,24,20]
+  },
+  msciacwi: {
+    start: 1990,
+    r: [-16,18,-5,23,4,21,14,16,23,24,-14,-17,-20,34,15,11,21,9,-42,35,13,-7,17,23,4,-2,8,24,-9,27,16,19,-18,22,19]
+  },
+  stoxx600: {
+    start: 1990,
+    r: [-14,15,-2,25,-1,22,18,35,35,24,-5,-19,-34,16,12,27,19,2,-46,29,10,-12,16,19,6,-3,-1,10,-14,25,-4,22,-13,16,7]
+  },
+  ibex35: {
+    start: 1992,
+    r: [6,55,-12,18,42,42,35,18,-22,-6,-28,29,18,19,32,-7,-40,27,-17,-13,-5,22,-4,-7,-2,7,-15,12,-15,8,-1,23,14]
+  },
+  nikkei: {
+    start: 1990,
+    r: [-39,-4,-26,2,13,-1,6,-20,-10,37,-26,-24,-18,24,8,40,6,-11,-42,19,1,-17,23,57,-8,9,0,19,-12,18,16,5,-9,28,20]
+  }
+};
+
+const fmt = v => '€' + Math.round(v).toLocaleString('es-ES');
+
+function calcSmooth(ini, monthly, rate, years) {
+  const data = [Math.round(ini)];
+  const r = rate / 100 / 12;
+  let v = ini;
+  for (let y = 1; y <= years; y++) {
+    for (let m = 0; m < 12; m++) v = v * (1 + r) + monthly;
+    data.push(Math.round(v));
+  }
+  return data;
+}
+
+function calcHistorical(ini, monthly, returns) {
+  const data = [Math.round(ini)];
+  let v = ini;
+  for (let i = 0; i < returns.length; i++) {
+    const mr = Math.pow(1 + returns[i] / 100, 1/12) - 1;
+    for (let m = 0; m < 12; m++) v = v * (1 + mr) + monthly;
+    data.push(Math.round(v));
+  }
+  return data;
+}
+
+function calcInvested(ini, monthly, years) {
+  const data = [Math.round(ini)];
+  for (let y = 1; y <= years; y++) data.push(Math.round(ini + monthly * 12 * y));
+  return data;
+}
+
+let myChart;
+
+function update() {
+  const ini     = parseFloat(document.getElementById('ini').value) || 0;
+  const monthly = parseFloat(document.getElementById('monthly').value) || 0;
+  const ret     = parseFloat(document.getElementById('ret').value);
+  const fee     = parseFloat(document.getElementById('fee').value);
+  const yrs     = parseInt(document.getElementById('yrs').value);
+  const key     = document.getElementById('asset-select').value;
+
+  document.getElementById('ret-v').textContent = ret.toFixed(1) + '%';
+  document.getElementById('fee-v').textContent = fee.toFixed(2) + '%';
+  document.getElementById('yrs-v').textContent = yrs + ' años';
+
+  const histData  = HIST[key];
+  const useHist   = !!histData;
+  const availYrs  = useHist ? histData.r.length : 0;
+  const plotYrs   = useHist ? Math.min(yrs, availYrs) : yrs;
+  const startYear = useHist ? (2024 - plotYrs) : null;
+
+  // Labels
+  let labels;
+  if (useHist) {
+    labels = [];
+    for (let y = 0; y <= plotYrs; y++) labels.push(String(startYear + y));
+  } else {
+    labels = ['Inicio'];
+    for (let y = 1; y <= yrs; y++) labels.push('Año ' + y);
+  }
+
+  // Datasets
+  const noFeeData   = calcSmooth(ini, monthly, ret, plotYrs);
+  const withFeeData = calcSmooth(ini, monthly, ret - fee, plotYrs);
+  const invData     = calcInvested(ini, monthly, plotYrs);
+
+  const totalInv   = invData[plotYrs];
+  const finalNet   = withFeeData[plotYrs];
+  const finalGross = noFeeData[plotYrs];
+
+  document.getElementById('m-inv').textContent   = fmt(totalInv);
+  document.getElementById('m-final').textContent = fmt(finalNet);
+  document.getElementById('m-gain').textContent  = fmt(finalNet - totalInv);
+  document.getElementById('m-fee').textContent   = fmt(finalGross - finalNet);
+
+  // Hist note
+  const hn = document.getElementById('hist-note');
+  if (useHist && yrs > availYrs) {
+    hn.style.display = 'block';
+    hn.innerHTML = `<strong>Datos disponibles:</strong> El historial del índice cubre ${availYrs} años (${histData.start}–2024). Se muestra la simulación histórica para ese periodo; ajusta el horizonte a ≤${availYrs} años para una comparación completa.`;
+  } else {
+    hn.style.display = 'none';
+  }
+
+  // Legend
+  const legendEl = document.getElementById('legend');
+  legendEl.innerHTML = `
+    <span><span class="dot" style="background:#185FA5;"></span>Proyección s/comisiones</span>
+    <span><span class="dot" style="background:#1D9E75;"></span>Proyección c/comisiones</span>
+    <span><span class="dot" style="background:#D85A30; opacity:0.6;"></span>Capital aportado</span>
+    ${useHist ? `<span><span class="dot" style="background:#BA7517;"></span>Historial real del índice</span>` : ''}
+  `;
+
+  const datasets = [
+    { label:'Proyección s/comisiones', data:noFeeData,   borderColor:'#185FA5', backgroundColor:'rgba(24,95,165,0.06)',  borderWidth:2,   pointRadius:0, fill:false, tension:0.3, borderDash:[5,4] },
+    { label:'Proyección c/comisiones', data:withFeeData, borderColor:'#1D9E75', backgroundColor:'rgba(29,158,117,0.08)', borderWidth:2.5, pointRadius:0, fill:false, tension:0.3 },
+    { label:'Capital aportado',        data:invData,     borderColor:'#D85A30', backgroundColor:'rgba(216,90,48,0.07)',  borderWidth:1.5, pointRadius:0, fill:true,  tension:0.1, borderDash:[3,3] },
+  ];
+
+  if (useHist) {
+    const slice    = histData.r.slice(histData.r.length - plotYrs);
+    const histLine = calcHistorical(ini, monthly, slice);
+    datasets.push({
+      label: 'Historial real del índice',
+      data: histLine,
+      borderColor: '#BA7517',
+      backgroundColor: 'rgba(186,117,23,0.07)',
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+      tension: 0.2,
+    });
+  }
+
+  const ctx = document.getElementById('chart').getContext('2d');
+  if (myChart) myChart.destroy();
+  myChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode:'index', intersect:false },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => c.dataset.label + ': ' + fmt(c.parsed.y) } }
+      },
+      scales: {
+        x: { ticks: { autoSkip:true, maxTicksLimit:12, font:{size:11}, color:'#888780' }, grid: { color:'rgba(136,135,128,0.15)' } },
+        y: { ticks: { font:{size:11}, color:'#888780', callback: v => '€'+(v>=1e6?(v/1e6).toFixed(1)+'M':(v/1000).toFixed(0)+'k') }, grid: { color:'rgba(136,135,128,0.15)' } }
+      }
+    }
+  });
+}
+
+document.getElementById('asset-select').addEventListener('change', function() {
+  const key = this.value;
+  const a = ASSETS[key];
+  const info = document.getElementById('asset-info');
+  if (!a.name) {
+    info.innerHTML = '';
+  } else {
+    document.getElementById('ret').value = a.ret;
+    document.getElementById('ret-v').textContent = a.ret.toFixed(1) + '%';
+    info.innerHTML = `
+      <span class="badge badge-ret">CAGR nominal: ${a.ret.toFixed(1)}%</span>
+      <span class="badge badge-per">${a.period}</span>
+      <span class="badge badge-note">${a.note}</span>`;
+  }
+  update();
+});
+
+document.getElementById('ret').addEventListener('input', () => {
+  document.getElementById('asset-select').value = 'custom';
+  document.getElementById('asset-info').innerHTML = '';
+  update();
+});
+['ini','monthly'].forEach(id => document.getElementById(id).addEventListener('input', update));
+['fee','yrs'].forEach(id => document.getElementById(id).addEventListener('input', update));
+
+// Init with S&P 500
+document.getElementById('asset-select').value = 'sp500';
+document.getElementById('asset-select').dispatchEvent(new Event('change'));
+</script>
+</body>
+</html>
