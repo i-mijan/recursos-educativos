@@ -64,6 +64,11 @@
     content="Recursos educativos · Ismael Miján"
   >
 
+  <meta
+    property="og:locale"
+    content="es_ES"
+  >
+
   <!-- Datos estructurados -->
 
   <script type="application/ld+json">
@@ -83,241 +88,500 @@
 
 
   <style>
+
     * {
       box-sizing: border-box;
     }
 
+
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
       background: #f3f6fa;
       color: #1f2937;
       line-height: 1.6;
     }
 
-    /* CABECERA */
+
+    /* =====================================================
+       CABECERA
+       ===================================================== */
 
     header {
+
+      /*
+        Preparado para incorporar posteriormente
+        una imagen de fondo.
+
+        Cuando tengamos la imagen, bastará con añadirla
+        mediante background-image.
+      */
+
       background:
-        radial-gradient(circle at 85% 20%, rgba(255,255,255,0.12), transparent 25%),
-        radial-gradient(circle at 10% 90%, rgba(255,255,255,0.08), transparent 25%),
-        linear-gradient(135deg, #172554, #1e40af);
+        radial-gradient(
+          circle at 85% 20%,
+          rgba(255,255,255,0.12),
+          transparent 25%
+        ),
+
+        radial-gradient(
+          circle at 10% 90%,
+          rgba(255,255,255,0.08),
+          transparent 25%
+        ),
+
+        linear-gradient(
+          135deg,
+          #172554,
+          #1e40af
+        );
 
       color: white;
+
       padding: 58px 20px 52px;
     }
 
+
     .header-inner {
+
       max-width: 1200px;
+
       margin: auto;
     }
 
+
     .header-kicker {
+
       font-size: 0.85rem;
+
       font-weight: 700;
+
       letter-spacing: 0.12em;
+
       text-transform: uppercase;
+
       opacity: 0.75;
+
       margin-bottom: 10px;
     }
 
+
     header h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
+
+      margin: 0 0 12px;
+
+      max-width: 900px;
+
+      font-size:
+        clamp(
+          2.2rem,
+          5vw,
+          3.5rem
+        );
+
       line-height: 1.05;
+
       letter-spacing: -0.03em;
     }
 
+
     header p {
+
       margin: 0;
+
       max-width: 760px;
+
       font-size: 1.12rem;
+
       opacity: 0.9;
     }
 
-    /* CONTENIDO */
+
+    .teacher {
+
+      display: inline-block;
+
+      margin-top: 22px;
+
+      padding: 8px 15px;
+
+      border:
+        1px solid
+        rgba(255,255,255,0.25);
+
+      border-radius: 999px;
+
+      background:
+        rgba(255,255,255,0.10);
+
+      font-size: 0.9rem;
+
+      font-weight: 700;
+
+      letter-spacing: 0.02em;
+    }
+
+
+    /* =====================================================
+       CONTENIDO
+       ===================================================== */
 
     main {
+
       max-width: 1200px;
+
       margin: 0 auto;
+
       padding: 34px 20px 60px;
     }
 
+
     .intro {
+
       max-width: 900px;
+
       margin: 0 auto 30px;
+
       color: #4b5563;
+
       font-size: 1rem;
     }
 
+
     .intro h2 {
+
       margin: 0 0 10px;
+
       color: #111827;
+
       font-size: 1.45rem;
     }
 
+
     .intro p {
+
       margin: 0;
     }
 
-    /* FILTROS */
+
+    /* =====================================================
+       FILTROS
+       ===================================================== */
 
     .controls {
+
       background: white;
+
       border-radius: 18px;
+
       padding: 22px;
+
       margin-bottom: 30px;
-      box-shadow: 0 5px 22px rgba(15, 23, 42, 0.07);
-      border: 1px solid #e5e7eb;
+
+      box-shadow:
+        0 5px 22px
+        rgba(15, 23, 42, 0.07);
+
+      border:
+        1px solid
+        #e5e7eb;
     }
+
 
     .search {
+
       width: 100%;
+
       padding: 14px 16px;
-      border: 1px solid #d1d5db;
+
+      border:
+        1px solid
+        #d1d5db;
+
       border-radius: 10px;
+
       font-size: 1rem;
+
       margin-bottom: 15px;
+
       outline: none;
-      transition: border 0.2s, box-shadow 0.2s;
+
+      transition:
+        border 0.2s,
+        box-shadow 0.2s;
     }
+
 
     .search:focus {
+
       border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.12);
     }
 
+
     .filters {
+
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
       gap: 12px;
     }
 
+
     .filters select {
+
       width: 100%;
+
       padding: 12px;
-      border: 1px solid #d1d5db;
+
+      border:
+        1px solid
+        #d1d5db;
+
       border-radius: 9px;
+
       background: white;
+
       font-size: 0.95rem;
+
       color: #374151;
+
       cursor: pointer;
     }
 
+
     .results-info {
+
       margin-top: 14px;
+
       font-size: 0.9rem;
+
       color: #6b7280;
     }
 
-    /* TARJETAS */
+
+    /* =====================================================
+       TARJETAS
+       ===================================================== */
 
     .resources {
+
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+
+      grid-template-columns:
+        repeat(3, 1fr);
+
       gap: 22px;
     }
 
+
     .card {
+
       position: relative;
+
       overflow: hidden;
 
       background: white;
+
       border-radius: 18px;
 
-      padding: 0 24px 24px;
+      padding:
+        0
+        24px
+        24px;
 
-      box-shadow: 0 5px 22px rgba(15, 23, 42, 0.06);
-      border: 1px solid #e5e7eb;
+      box-shadow:
+        0 5px 22px
+        rgba(15, 23, 42, 0.06);
+
+      border:
+        1px solid
+        #e5e7eb;
 
       transition:
         transform 0.22s ease,
         box-shadow 0.22s ease;
 
       display: flex;
+
       flex-direction: column;
+
       min-height: 290px;
     }
 
+
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+
+      transform:
+        translateY(-5px);
+
+      box-shadow:
+        0 12px 30px
+        rgba(15, 23, 42, 0.12);
     }
 
-    /* CABECERA VISUAL DE CADA TARJETA */
+
+    /* =====================================================
+       CABECERA VISUAL DE CADA TARJETA
+       ===================================================== */
 
     .card-top {
+
       height: 82px;
-      margin: 0 -24px 20px;
+
+      margin:
+        0
+        -24px
+        20px;
 
       display: flex;
+
       align-items: center;
+
       padding-left: 24px;
 
       font-size: 2.1rem;
     }
 
+
     .history .card-top {
-      background: linear-gradient(135deg, #dbeafe, #eff6ff);
+
+      background:
+        linear-gradient(
+          135deg,
+          #dbeafe,
+          #eff6ff
+        );
     }
+
 
     .geography .card-top {
-      background: linear-gradient(135deg, #dcfce7, #f0fdf4);
+
+      background:
+        linear-gradient(
+          135deg,
+          #dcfce7,
+          #f0fdf4
+        );
     }
+
 
     .economy .card-top {
-      background: linear-gradient(135deg, #fef3c7, #fffbeb);
+
+      background:
+        linear-gradient(
+          135deg,
+          #fef3c7,
+          #fffbeb
+        );
     }
 
+
     .card .type {
+
       display: inline-block;
+
       font-size: 0.75rem;
+
       font-weight: 800;
+
       text-transform: uppercase;
+
       letter-spacing: 0.06em;
+
       color: #2563eb;
+
       margin-bottom: 7px;
     }
 
+
     .card h2 {
-      margin: 0 0 9px;
+
+      margin:
+        0
+        0
+        9px;
+
       font-size: 1.28rem;
+
       line-height: 1.3;
+
       color: #111827;
     }
 
+
     .card p {
-      margin: 0 0 18px;
+
+      margin:
+        0
+        0
+        18px;
+
       color: #6b7280;
+
       font-size: 0.93rem;
     }
 
+
     .meta {
+
       margin-top: auto;
+
       display: flex;
+
       flex-wrap: wrap;
+
       gap: 7px;
+
       margin-bottom: 18px;
     }
 
+
     .tag {
+
       background: #eef2ff;
+
       color: #3730a3;
-      padding: 4px 9px;
+
+      padding:
+        4px
+        9px;
+
       border-radius: 999px;
+
       font-size: 0.76rem;
+
       font-weight: 700;
     }
 
+
     .card a {
+
       display: block;
+
       text-align: center;
 
       background: #1d4ed8;
+
       color: white;
 
       text-decoration: none;
-      padding: 10px 15px;
+
+      padding:
+        10px
+        15px;
+
       border-radius: 9px;
 
       font-weight: 700;
@@ -327,90 +591,155 @@
         transform 0.2s ease;
     }
 
+
     .card a:hover {
+
       background: #1e40af;
-      transform: translateY(-1px);
+
+      transform:
+        translateY(-1px);
     }
+
 
     .no-results {
+
       display: none;
+
       background: white;
+
       padding: 40px;
+
       border-radius: 18px;
+
       text-align: center;
+
       color: #6b7280;
+
       grid-column: 1 / -1;
-      border: 1px solid #e5e7eb;
+
+      border:
+        1px solid
+        #e5e7eb;
     }
 
-    /* PIE */
+
+    /* =====================================================
+       PIE
+       ===================================================== */
 
     footer {
-      border-top: 1px solid #e5e7eb;
+
+      border-top:
+        1px solid
+        #e5e7eb;
+
       background: white;
+
       text-align: center;
+
       padding: 26px 20px;
+
       color: #6b7280;
+
       font-size: 0.9rem;
     }
 
-    /* RESPONSIVE */
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
 
     @media (max-width: 900px) {
+
       .resources {
-        grid-template-columns: repeat(2, 1fr);
+
+        grid-template-columns:
+          repeat(2, 1fr);
       }
     }
+
 
     @media (max-width: 650px) {
 
       .filters {
+
         grid-template-columns: 1fr;
       }
+
 
       .resources {
+
         grid-template-columns: 1fr;
       }
 
+
       header {
-        padding: 44px 20px;
+
+        padding:
+          44px
+          20px;
       }
 
+
       main {
+
         padding-top: 22px;
       }
 
+
       .card {
+
         min-height: auto;
       }
     }
+
   </style>
+
 </head>
 
 
 <body>
 
+
+<!-- =====================================================
+     CABECERA
+     ===================================================== -->
+
 <header>
+
   <div class="header-inner">
 
     <div class="header-kicker">
       Materiales educativos interactivos
     </div>
 
+
     <h1>
       Recursos educativos de Geografía, Historia y Economía
     </h1>
 
+
     <p>
       Atlas, mapas, simuladores y herramientas interactivas
-      para trabajar contenidos de ESO y Bachillerato.
+      para ESO y Bachillerato.
     </p>
 
+
+    <div class="teacher">
+      Profesor: Ismael Miján
+    </div>
+
   </div>
+
 </header>
 
 
+<!-- =====================================================
+     CONTENIDO PRINCIPAL
+     ===================================================== -->
+
 <main>
+
 
   <!-- INTRODUCCIÓN -->
 
@@ -419,6 +748,7 @@
     <h2>
       Recursos educativos interactivos para el aula
     </h2>
+
 
     <p>
       Colección de recursos digitales para la enseñanza de
@@ -431,12 +761,15 @@
   </section>
 
 
-  <!-- BUSCADOR Y FILTROS -->
+  <!-- =====================================================
+       BUSCADOR Y FILTROS
+       ===================================================== -->
 
   <section
     class="controls"
     aria-label="Buscador y filtros de recursos"
   >
+
 
     <input
       type="search"
@@ -446,44 +779,103 @@
       aria-label="Buscar recursos educativos"
     >
 
+
     <div class="filters">
+
 
       <select
         id="subject"
         aria-label="Filtrar por materia"
       >
-        <option value="">Todas las materias</option>
-        <option value="Historia">🏛️ Historia</option>
-        <option value="Geografía">🌍 Geografía</option>
-        <option value="Economía">💶 Economía</option>
+
+        <option value="">
+          Todas las materias
+        </option>
+
+        <option value="Historia">
+          🏛️ Historia
+        </option>
+
+        <option value="Geografía">
+          🌍 Geografía
+        </option>
+
+        <option value="Economía">
+          💶 Economía
+        </option>
+
       </select>
+
 
       <select
         id="course"
         aria-label="Filtrar por curso"
       >
-        <option value="">Todos los cursos</option>
-        <option value="1º ESO">1º ESO</option>
-        <option value="2º ESO">2º ESO</option>
-        <option value="3º ESO">3º ESO</option>
-        <option value="4º ESO">4º ESO</option>
-        <option value="Bachillerato">Bachillerato</option>
+
+        <option value="">
+          Todos los cursos
+        </option>
+
+        <option value="1º ESO">
+          1º ESO
+        </option>
+
+        <option value="2º ESO">
+          2º ESO
+        </option>
+
+        <option value="3º ESO">
+          3º ESO
+        </option>
+
+        <option value="4º ESO">
+          4º ESO
+        </option>
+
+        <option value="Bachillerato">
+          Bachillerato
+        </option>
+
       </select>
+
 
       <select
         id="type"
         aria-label="Filtrar por tipo de recurso"
       >
-        <option value="">Todos los tipos</option>
-        <option value="Atlas">Atlas</option>
-        <option value="Mapa">Mapa</option>
-        <option value="Infografía">Infografía</option>
-        <option value="Simulación">Simulación</option>
-        <option value="Actividad">Actividad</option>
-        <option value="Comparador">Comparador</option>
+
+        <option value="">
+          Todos los tipos
+        </option>
+
+        <option value="Atlas">
+          Atlas
+        </option>
+
+        <option value="Mapa">
+          Mapa
+        </option>
+
+        <option value="Infografía">
+          Infografía
+        </option>
+
+        <option value="Simulación">
+          Simulación
+        </option>
+
+        <option value="Actividad">
+          Actividad
+        </option>
+
+        <option value="Comparador">
+          Comparador
+        </option>
+
       </select>
 
     </div>
+
 
     <div
       class="results-info"
@@ -496,7 +888,9 @@
   </section>
 
 
-  <!-- RECURSOS -->
+  <!-- =====================================================
+       RECURSOS
+       ===================================================== -->
 
   <section
     class="resources"
@@ -507,6 +901,7 @@
 
     <!-- ================= HISTORIA ================= -->
 
+
     <article
       class="card history"
       data-subject="Historia"
@@ -514,21 +909,42 @@
       data-type="Atlas"
     >
 
-      <div class="card-top" aria-hidden="true">🏛️</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        🏛️
+      </div>
 
-      <span class="type">Atlas</span>
 
-      <h2>Atlas del Imperialismo</h2>
+      <span class="type">
+        Atlas
+      </span>
+
+
+      <h2>
+        Atlas del Imperialismo
+      </h2>
+
 
       <p>
         Atlas interactivo sobre la expansión imperialista,
         los grandes imperios coloniales y el proceso de descolonización.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Historia</span>
-        <span class="tag">4º ESO</span>
+
+        <span class="tag">
+          Historia
+        </span>
+
+        <span class="tag">
+          4º ESO
+        </span>
+
       </div>
+
 
       <a
         href="historia/imperialismo/"
@@ -548,11 +964,23 @@
       data-type="Atlas"
     >
 
-      <div class="card-top" aria-hidden="true">⚔️</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        ⚔️
+      </div>
 
-      <span class="type">Atlas</span>
 
-      <h2>Atlas de la Primera Guerra Mundial</h2>
+      <span class="type">
+        Atlas
+      </span>
+
+
+      <h2>
+        Atlas de la Primera Guerra Mundial
+      </h2>
+
 
       <p>
         Mapas y recursos interactivos para comprender
@@ -560,10 +988,19 @@
         de la Primera Guerra Mundial.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Historia</span>
-        <span class="tag">4º ESO</span>
+
+        <span class="tag">
+          Historia
+        </span>
+
+        <span class="tag">
+          4º ESO
+        </span>
+
       </div>
+
 
       <a
         href="historia/primera-guerra-mundial/"
@@ -583,21 +1020,42 @@
       data-type="Atlas"
     >
 
-      <div class="card-top" aria-hidden="true">☢️</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        ☢️
+      </div>
 
-      <span class="type">Atlas</span>
 
-      <h2>Atlas de la Guerra Fría</h2>
+      <span class="type">
+        Atlas
+      </span>
+
+
+      <h2>
+        Atlas de la Guerra Fría
+      </h2>
+
 
       <p>
         Exploración interactiva de los bloques, las crisis,
         los conflictos y la evolución geopolítica de la Guerra Fría.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Historia</span>
-        <span class="tag">4º ESO</span>
+
+        <span class="tag">
+          Historia
+        </span>
+
+        <span class="tag">
+          4º ESO
+        </span>
+
       </div>
+
 
       <a
         href="historia/guerra-fria/"
@@ -617,21 +1075,42 @@
       data-type="Comparador"
     >
 
-      <div class="card-top" aria-hidden="true">⚖️</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        ⚖️
+      </div>
 
-      <span class="type">Comparador</span>
 
-      <h2>Comparador de regímenes políticos</h2>
+      <span class="type">
+        Comparador
+      </span>
+
+
+      <h2>
+        Comparador de regímenes políticos
+      </h2>
+
 
       <p>
         Herramienta interactiva para comparar diferentes
         sistemas y regímenes políticos.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Historia</span>
-        <span class="tag">4º ESO</span>
+
+        <span class="tag">
+          Historia
+        </span>
+
+        <span class="tag">
+          4º ESO
+        </span>
+
       </div>
+
 
       <a
         href="historia/regimenes-politicos/"
@@ -646,6 +1125,7 @@
 
     <!-- ================= GEOGRAFÍA ================= -->
 
+
     <article
       class="card geography"
       data-subject="Geografía"
@@ -653,21 +1133,42 @@
       data-type="Atlas"
     >
 
-      <div class="card-top" aria-hidden="true">🌍</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        🌍
+      </div>
 
-      <span class="type">Atlas</span>
 
-      <h2>Atlas demográfico</h2>
+      <span class="type">
+        Atlas
+      </span>
+
+
+      <h2>
+        Atlas demográfico
+      </h2>
+
 
       <p>
         Recurso interactivo para explorar la distribución,
         evolución y principales características de la población mundial.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Geografía</span>
-        <span class="tag">3º ESO</span>
+
+        <span class="tag">
+          Geografía
+        </span>
+
+        <span class="tag">
+          3º ESO
+        </span>
+
       </div>
+
 
       <a
         href="geografia/atlas-demografico/"
@@ -687,21 +1188,42 @@
       data-type="Atlas"
     >
 
-      <div class="card-top" aria-hidden="true">🚢</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        🚢
+      </div>
 
-      <span class="type">Atlas</span>
 
-      <h2>Comercio mundial</h2>
+      <span class="type">
+        Atlas
+      </span>
+
+
+      <h2>
+        Comercio mundial
+      </h2>
+
 
       <p>
         Recurso interactivo para analizar los principales flujos,
         rutas y espacios del comercio internacional.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Geografía</span>
-        <span class="tag">3º ESO</span>
+
+        <span class="tag">
+          Geografía
+        </span>
+
+        <span class="tag">
+          3º ESO
+        </span>
+
       </div>
+
 
       <a
         href="geografia/comercio-mundial/"
@@ -716,6 +1238,7 @@
 
     <!-- ================= ECONOMÍA ================= -->
 
+
     <article
       class="card economy"
       data-subject="Economía"
@@ -723,22 +1246,46 @@
       data-type="Simulación"
     >
 
-      <div class="card-top" aria-hidden="true">💶</div>
+      <div
+        class="card-top"
+        aria-hidden="true"
+      >
+        💶
+      </div>
 
-      <span class="type">Simulación</span>
 
-      <h2>Simulador de interés compuesto</h2>
+      <span class="type">
+        Simulación
+      </span>
+
+
+      <h2>
+        Simulador de interés compuesto
+      </h2>
+
 
       <p>
         Simulador interactivo para experimentar con el crecimiento
         del ahorro y la inversión a través del interés compuesto.
       </p>
 
+
       <div class="meta">
-        <span class="tag">Economía</span>
-        <span class="tag">3º ESO</span>
-        <span class="tag">4º ESO</span>
+
+        <span class="tag">
+          Economía
+        </span>
+
+        <span class="tag">
+          3º ESO
+        </span>
+
+        <span class="tag">
+          4º ESO
+        </span>
+
       </div>
+
 
       <a
         href="economia/simulador-interes-compuesto/"
@@ -756,38 +1303,79 @@
       id="noResults"
       aria-live="polite"
     >
-      No se han encontrado recursos que coincidan con los filtros seleccionados.
+      No se han encontrado recursos que coincidan
+      con los filtros seleccionados.
     </div>
+
 
   </section>
 
 </main>
 
 
+<!-- =====================================================
+     PIE DE PÁGINA
+     ===================================================== -->
+
 <footer>
-  Recursos educativos · Ismael Miján
+
+  © 2026 Ismael Miján ·
+  Contenidos de elaboración propia ·
+  Recursos educativos
+
 </footer>
 
 
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
+
 <script>
 
-  const searchInput = document.getElementById("search");
-  const subjectSelect = document.getElementById("subject");
-  const courseSelect = document.getElementById("course");
-  const typeSelect = document.getElementById("type");
+  const searchInput =
+    document.getElementById("search");
 
-  const cards = document.querySelectorAll(".card");
+  const subjectSelect =
+    document.getElementById("subject");
 
-  const resultsInfo = document.getElementById("resultsInfo");
-  const noResults = document.getElementById("noResults");
+  const courseSelect =
+    document.getElementById("course");
+
+  const typeSelect =
+    document.getElementById("type");
+
+
+  const cards =
+    document.querySelectorAll(".card");
+
+
+  const resultsInfo =
+    document.getElementById("resultsInfo");
+
+
+  const noResults =
+    document.getElementById("noResults");
 
 
   function filterResources() {
 
-    const search = searchInput.value.toLowerCase().trim();
-    const subject = subjectSelect.value;
-    const course = courseSelect.value;
-    const type = typeSelect.value;
+    const search =
+      searchInput.value
+        .toLowerCase()
+        .trim();
+
+
+    const subject =
+      subjectSelect.value;
+
+
+    const course =
+      courseSelect.value;
+
+
+    const type =
+      typeSelect.value;
+
 
     let visible = 0;
 
@@ -795,16 +1383,26 @@
     cards.forEach(card => {
 
       const title =
-        card.querySelector("h2").textContent.toLowerCase();
+        card
+          .querySelector("h2")
+          .textContent
+          .toLowerCase();
+
 
       const description =
-        card.querySelector("p").textContent.toLowerCase();
+        card
+          .querySelector("p")
+          .textContent
+          .toLowerCase();
+
 
       const cardSubject =
         card.dataset.subject;
 
+
       const cardCourse =
         card.dataset.course;
+
 
       const cardType =
         card.dataset.type;
@@ -840,13 +1438,15 @@
 
       if (matches) {
 
-        card.style.display = "flex";
+        card.style.display =
+          "flex";
+
         visible++;
 
       } else {
 
-        card.style.display = "none";
-
+        card.style.display =
+          "none";
       }
 
     });
@@ -871,15 +1471,18 @@
     filterResources
   );
 
+
   subjectSelect.addEventListener(
     "change",
     filterResources
   );
 
+
   courseSelect.addEventListener(
     "change",
     filterResources
   );
+
 
   typeSelect.addEventListener(
     "change",
@@ -887,6 +1490,7 @@
   );
 
 </script>
+
 
 </body>
 </html>
