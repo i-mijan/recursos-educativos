@@ -1,0 +1,292 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Atlas histórico del mundo islámico</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>
+:root{--bg:#f6f1e4;--ink:#1c2433;--mut:#5b6575;--pn:#fffdf7;--ac:#0f4c5c;--bd:#d9cfb6;--sea:#bcd4e0;--land:#ece3cc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141a24;--ink:#e8e4d8;--mut:#9aa5b5;--pn:#1c2432;--ac:#6cc4d6;--bd:#33405a;--sea:#1f3b4f;--land:#3a3d33}}
+:root[data-theme=dark]{--bg:#141a24;--ink:#e8e4d8;--mut:#9aa5b5;--pn:#1c2432;--ac:#6cc4d6;--bd:#33405a;--sea:#1f3b4f;--land:#3a3d33}
+html,body{height:100%;margin:0}body{display:flex;flex-direction:column;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,sans-serif}
+h1{font:600 18px Georgia,serif;margin:0}header{padding:8px 12px;border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+button,select{font:inherit;color:var(--ink);background:var(--pn);border:1px solid var(--bd);border-radius:6px;padding:4px 8px;cursor:pointer}button.on{background:var(--ac);color:var(--bg)}
+#main{flex:1;display:flex;min-height:0}#left{flex:1;position:relative;display:flex;flex-direction:column;min-width:0}
+#chips{padding:5px 10px;display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;border-bottom:1px solid var(--bd)}#chips label{white-space:nowrap}
+#maps{flex:1;display:flex;gap:4px;min-height:0;touch-action:none}.mp{flex:1;min-width:0;display:flex;flex-direction:column}.cap{font:600 12px Georgia,serif;padding:2px 8px}
+.mp svg{flex:1;width:100%;min-height:0;background:var(--sea);cursor:grab}.sea{fill:var(--sea)}.land{fill:var(--land);stroke:var(--land);stroke-width:.8}.riv{fill:none;stroke:var(--sea);stroke-width:2}
+text{font:9px system-ui;fill:var(--ink);paint-order:stroke;stroke:var(--land);stroke-width:2.5;pointer-events:none}
+#leg{position:absolute;left:8px;bottom:8px;background:var(--pn);border:1px solid var(--bd);border-radius:8px;padding:6px 8px;font-size:11px;max-width:230px;max-height:45%;overflow:auto;opacity:.95}
+#leg i{display:inline-block;width:11px;height:11px;margin-right:4px;vertical-align:-1px;border:1px solid #0004}
+#zm{position:absolute;right:8px;top:30px;display:flex;flex-direction:column;gap:3px}
+aside{width:350px;border-left:1px solid var(--bd);display:flex;flex-direction:column;background:var(--pn);min-height:0}
+#det{padding:10px 12px;border-bottom:1px solid var(--bd);max-height:36%;overflow:auto}#det h3{margin:0 0 4px;font:600 15px Georgia,serif}
+#tabs{display:flex;gap:2px;padding:4px}#tabs button{flex:1;padding:3px;font-size:12px}#tab{flex:1;overflow:auto;padding:8px 12px}
+.call{background:var(--bg);border-left:3px solid var(--ac);padding:6px 8px;margin:8px 0;font-size:13px}
+.ev{display:block;width:100%;text-align:left;margin:2px 0}.pl{display:inline-block;margin:2px}.mut{color:var(--mut)}
+#tl{border-top:1px solid var(--bd);padding:4px 12px 6px;background:var(--pn)}#pb{display:flex;gap:3px;overflow-x:auto;padding-bottom:3px}#pb button{padding:2px 7px;font-size:12px;flex:none}
+.tlw{position:relative;height:18px}.tlw i{position:absolute;top:0;width:9px;height:9px;border-radius:50%;margin-left:-4px;cursor:pointer;border:1px solid #fff8}
+#rng{width:100%;margin:0;position:absolute;top:8px;left:0}
+@media(max-width:820px){#main{flex-direction:column}aside{width:auto;height:42%;border-left:0;border-top:1px solid var(--bd)}}
+</style><script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.6.9/topojson.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/datamaps/0.5.9/datamaps.world.min.js"></script></head><body>
+<header><h1>Atlas histórico del mundo islámico · 610-1924</h1><span class="mut" style="font-size:12px;font-style:italic">Realizado por Ismael Miján</span>
+<button id="bg">▶ Explícame la evolución del Islam</button>
+<select id="selR" title="Región"></select><select id="selY" title="Período"></select>
+<label><input type="checkbox" id="cmp"> Comparar con</label><select id="selB"></select></header>
+<div id="main"><div id="left"><div id="chips"></div><div id="maps"></div><div id="leg"></div>
+<div id="zm"><button id="zi">＋</button><button id="zo">－</button><button id="zr">⟲</button></div></div>
+<aside><div id="det"></div><div id="tabs"></div><div id="tab"></div></aside></div>
+<div id="tl"><div id="pb"></div><div class="tlw"><div id="dots"></div><input id="rng" type="range" min="600" max="1930" value="632"></div></div>
+<script>
+const $=s=>document.querySelector(s),X=o=>(+o+12)*10,Y=a=>(50-a)*12;
+const P=s=>s.trim().split(/\s+/).map(p=>{const q=p.split(',');return Math.round(X(q[0]))+','+Math.round(Y(q[1]))}).join(' ');
+const SEAS=['-12,50 -4.7,48.5 -1.5,46 -1.8,43.4 -9.2,43 -9.5,38.8 -8.9,37 -6.3,36.7 -5.4,36 -5.9,35.8 -9.5,32 -12,28.5',
+'-5.4,36 -2,36.7 -0.5,37.6 0.2,38.7 -0.3,39.5 0.9,41 3.2,42 3.5,43.3 6,43.1 8,43.8 9.5,44.3 10.5,43 12.4,41.7 14,40.8 15.7,40 15.8,38.5 16.1,38 17,39 16.5,39.8 18.4,40.1 16,41.9 14,42.4 12.3,44 12.3,45.3 13.7,45.6 13.6,44.8 15.2,44 17,43 18.5,42.4 19.4,41.8 19.5,40.5 20,39.7 21,38.3 21.5,36.8 23,36.4 22.8,37.5 24,38 23.5,39 22.6,40.3 23.7,40.4 24.2,40.9 26,40.8 26.2,40.4 26.7,39.2 26.3,38.2 27.3,37.1 28.5,36.7 30.5,36.3 34,36.2 36,36.6 36,36 35.8,34 35,32.8 34.3,31.3 32.3,31.2 29,30.9 25,31.6 24,32.4 20,32 19.2,30.3 17,31 15.2,32.3 12,32.8 10.2,33.5 10.8,35 11,37.1 10.2,37.3 8.5,37 6,36.9 3,36.8 0,35.9 -2,35.2 -5.2,35.9',
+'28.1,41.2 28,42.5 28.6,44 29.7,45.3 31,46.5 34,46 36.5,45.4 37.5,44.5 39.5,43.5 41.5,42 41.5,41.3 39,41 36,41.6 33,42 31,41.2 29.2,41.1',
+'26.3,40.4 27.5,40.35 29.1,40.7 29.1,41.2 28.9,41.1 27.5,40.9 26.3,40.5',
+'47,45.5 49,46.5 51,46.8 53.2,45.8 51.5,44.5 50.5,44.3 51.2,43.2 52.8,41.5 53,40 54,38.5 53.9,37.2 51,36.8 49.2,37.5 48.8,39.5 49.5,40.4 48.6,41.8 47.3,43.2 47.5,44.6',
+'32.5,30 33.6,27.9 35.6,24 37.3,19.8 38.6,18 40.5,14.9 43,12.6 43.4,12.7 43.2,13.9 42.7,16 41,19.5 39.2,21.5 37.3,25 35,28.2 34.9,29.6 34.6,29 34.3,28 32.9,29.8',
+'56.2,26.5 56.6,27.1 54,26.6 52.5,27.5 51,28.8 50,30 48.8,30.3 48.4,28.7 49.8,26.9 50.3,25.5 51.1,24.8 51.6,25.4 51.6,24.1 54,24.1 56,25.3',
+'43.4,12.7 45,12.8 48.7,14 52,16 55,17.2 57.8,19.5 59.7,22.4 58.5,23.6 56.4,24.6 56.5,26.3 57,27 58.5,25.7 61.5,25.2 66.5,25.4 67.2,24.1 68.8,23.2 70.5,20.8 72.8,20.5 72.9,19 73.5,16.5 74.5,13 76.3,9.8 77.5,8.1 79,9 80.1,10.5 80,13.5 80.2,15.7 82,17 85,19.8 87,21.5 90,22.2 92,21 94,18 94.5,16 97.5,16.5 100,16 100,5 48,5 48.5,5.5 51.2,10.4 51,11.8 47,11.2 44,10.6 43.2,11.6'];
+const ISL=['12.4,38 15.6,38.2 15.1,36.7 12.5,37.6','32.3,35 34.5,35.7 33.5,34.6','79.8,6 81.8,7.5 80.5,9.8 79.8,8.5','23.5,35.5 26.2,35.2 24,35.1'];
+const RIV=['31.2,30.1 31,27.5 32.6,25.7 32.9,24 32.5,22','40,36.5 38.5,35.5 41,34 44,33 47,31 48,30.2','41,37.3 43,35.5 44.4,33.3 46,32.5','73,34 71,30 68,25'];
+const RK=['AR','SY','EG','IF','MA','AS','AC','AE','GR','SI','IR','PE','JU','SD','IN','AT','BA'];
+const RG={AR:['Arabia','35,29.5 38,31.5 44,29.5 48,28.5 50.5,25 56,24.5 59,22.5 55,17.5 48,14 43.2,12.8 42.5,16 40,20 37,25'],
+SY:['Siria-Palestina (Bilad al-Sham)','34.3,31.3 35,33 36,36.2 38,37 41.5,37 42,34 40,32 38,31.5 35,29.5'],
+EG:['Egipto','25,31.6 29,30.9 32.3,31.2 34.3,31.3 34.9,29.5 33.6,27.8 35.6,24 36.5,22 25,22'],
+IF:['Ifriqiya (Libia y Túnez)','8.5,37 10.2,37.3 11,37.1 10.8,35 10.2,33.5 12,32.8 15.2,32.3 17,31 19.2,30.3 20,32 24,32 25,31.6 25,22 15,22 8,26 7,33'],
+MA:['Magreb occidental','-5.4,35.9 -2,35.2 0,35.9 3,36.8 6,36.9 8.5,37 7,33 8,26 -5,26 -9,30 -9.5,32 -6,35.8'],
+AS:['Al-Ándalus sur y oeste','-9,38.7 -7,39.8 -4.5,39.5 -1.5,39 0,38.7 -2,36.7 -5.4,36 -6.3,36.7 -8.9,37'],
+AC:['Al-Ándalus centro (Toledo, Valencia)','-7,39.8 -9,40.5 -7,41.5 -3,41.8 -1.5,41 0.9,41 -0.3,39.5 0,38.7 -1.5,39 -4.5,39.5'],
+AE:['Valle del Ebro (Marca Superior)','-3,41.8 -1.5,42.6 1,42 3.2,42 0.9,41 -1.5,41'],
+GR:['Granada','-5.4,36 -2,36.7 -1.8,37.5 -4.5,37.5 -5.4,36.8'],
+SI:['Sicilia','12.4,38 15.6,38.2 15.1,36.7 12.5,37.6'],
+IR:['Irak (Mesopotamia)','40,32 42,34 41.5,37 44.5,37.2 46.5,35.5 47.5,33 48.6,30.2 47,29.8 44,29.5'],
+PE:['Persia (Irán)','44.5,37.2 44,39.5 48,39 49,37.5 54,37.2 57,37.5 61,36 61.5,31 62,28 61.5,25.3 57,25.8 56.5,27 54,26.6 51,28.8 49,30.2 47.5,33 46.5,35.5'],
+JU:['Jorasán y Transoxiana','54,37.5 55,41.5 59,45 66,45 70,43 73,41 71,37 67,36.3 61,36 57,37.5'],
+SD:['Sind y Afganistán','61.5,25.3 62,28 61.5,32 61,36 67,35.5 71,37 74,35 75,32 73,27 71,24.5 68.8,23.2 66.5,25.4'],
+IN:['India','72.5,23 71,24.5 73,27 75,32 79,32 83,28 88,26.5 89,22.5 87,21.5 85,19.8 82,17 80.2,15.7 80,13.5 77.5,8.1 76.3,9.8 74.5,13 73.5,16.5 72.9,19 72.8,20.5 70.5,20.8'],
+AT:['Anatolia','26.5,39.3 27,37.8 28,36.7 30.5,36.3 34,36.2 36,36.6 36,36.2 38,37 41.5,37 44.5,37.2 44,39.5 42,41 39,41 36,41.6 33,42 31,41.2 29.2,41.2 27.5,40.4 26.3,40.2'],
+BA:['Balcanes','19.4,41.8 18.5,42.4 17,43 15.2,44 19,45.7 22,45.5 28,44 28.8,44.5 28,43 28,41.2 26.3,40.5 24.2,40.9 23,40.4 22.6,40.3 23.5,39 23,37.9 21.5,36.8 21,38.5 20,39.7 19.5,40.5']};
+const RP={},RC={};RK.forEach(k=>{RP[k]=P(RG[k][1]);const q=RP[k].split(' ').map(s=>s.split(',').map(Number));RC[k]=[q.reduce((a,b)=>a+b[0],0)/q.length,q.reduce((a,b)=>a+b[1],0)/q.length]});
+let LAND='';try{const T=Datamap.prototype.worldTopo,pr=r=>r.map(c=>X(Math.max(-20,Math.min(110,c[0]))).toFixed(1)+','+Y(Math.max(0,Math.min(60,c[1]))).toFixed(1)).join('L'),pt=[];topojson.feature(T,T.objects.world).features.forEach(f=>{const g=f.geometry;if(g&&g.coordinates)(g.type=='Polygon'?[g.coordinates]:g.coordinates).forEach(po=>po.forEach(r=>{if(r.some(c=>c[0]>-16&&c[0]<104&&c[1]>2&&c[1]<56))pt.push('M'+pr(r)+'Z')}))});LAND=pt.join('')}catch(e){LAND=''}
+Object.assign(RG,{AR:['Arabia','34.95,29.55 36.8,29.9 38.5,31.2 41,30.2 44,29.2 48.3,29 50,27 53,25.2 56.6,26.4 57,25 60.5,22 60.5,12 43.5,12 42.7,13 41,15.6 38.8,19.6 37,22 36,24.5 35.4,26 34.7,28'],
+SY:['Siria-Palestina (Bilad al-Sham)','34.25,31.25 34.9,33 35,36 36,36.8 36.7,37 37.5,37.2 38.7,37.3 40,37.7 41.3,37.3 42,37.4 41.2,36 40.9,35 40.3,34 39.3,32.5 38.5,31.2 36.8,29.9 34.95,29.55'],
+EG:['Egipto','25,33 34.25,33 34.25,31.25 34.95,29.55 34.7,28 35.4,26 36,24.5 37,22 25,22'],
+IF:['Ifriqiya (Libia y Túnez)','4.6,38 11.2,37.7 11.5,34.5 16,34 25,33.9 25,24 10,24 8,28.5 6,31 4.8,34 5,36'],
+MA:['Magreb occidental','-10,35.98 -1.5,35.98 -0.5,36.5 3,37.5 4.6,38 5,36 4.8,34 6,31 8,28.5 -10,28.5'],
+AS:['Al-Ándalus sur y oeste','-10,35.98 -10,39.2 -7.2,39.2 -5.5,38.9 -4.2,38.6 -3,38.5 -2.3,38.3 -2.4,37.95 -3,37.75 -3.6,37.55 -4.1,37.4 -4.6,37.1 -5.2,36.75 -5.5,36.4 -5.5,35.98'],
+AC:['Al-Ándalus centro (Toledo, Valencia)','-10,39.2 -10,41.2 -6.5,41.2 -4,41.1 -2.6,41.3 -1.6,41.05 -0.6,40.7 0.4,40.6 1.6,40.3 1.6,37 -1.5,37 -1.5,37.5 -2,37.8 -2.4,37.95 -2.3,38.3 -3,38.5 -4.2,38.6 -5.5,38.9 -7.2,39.2'],
+AE:['Valle del Ebro (Marca Superior)','-2.6,41.3 -2.2,42.2 -1,42.5 0.2,42.4 1.3,42 1.3,41.05 1.6,40.3 0.4,40.6 -0.6,40.7 -1.6,41.05'],
+GR:['Granada','-5.5,35.98 -5.5,36.4 -5.2,36.75 -4.6,37.1 -4.1,37.4 -3.6,37.55 -3,37.75 -2.4,37.95 -2,37.8 -1.5,37.5 -1.5,35.98'],
+SI:['Sicilia','11.8,36.3 15.2,36.3 15.3,37.5 15.62,38.1 15.62,38.7 11.8,38.7'],
+IR:['Irak (Mesopotamia)','42,37.4 43.8,37.2 44.7,36.9 45.3,35.8 45.9,35 46.1,33.8 46,33 47,32.2 47.8,31 48.3,29.9 48.3,29 44,29.2 41,30.2 38.5,31.2 39.3,32.5 40.3,34 40.9,35 41.2,36'],
+PE:['Persia (Irán)','44.3,39.7 46,39.5 47.7,39 48.6,38.6 49.3,38.3 53.9,37.4 55.5,38 57.4,37.7 59.3,37.5 60.4,36.7 61,35.8 60.9,33.5 61.6,31.5 62.5,29.8 63.2,27.2 61.6,25.2 61.2,24 57,25 56.6,26.4 53,25.2 50,27 48.3,29 48.3,29.9 47.8,31 47,32.2 46,33 46.1,33.8 45.9,35 45.3,35.8 44.7,36.9 43.8,37.2 44,38.4'],
+JU:['Transoxiana y Jorasán','53.9,37.4 55.5,38 57.4,37.7 59.3,37.5 60.4,36.7 61,35.8 62.3,36.9 64,37.3 66,37.6 67.3,37.2 68.7,37.5 70.5,37 71.5,37.6 74.5,37.3 75,38.5 75.8,40 75,42 73.5,43 71,44 68,44.5 64,45.5 60,45 56,43.5 53.5,41.8'],
+SD:['Sind y Afganistán','61,35.8 62.3,36.9 64,37.3 66,37.6 67.3,37.2 68.7,37.5 70.5,37 71.5,37.6 74.5,37.3 75.3,35 75,33 73.8,32.5 72,30 71,27.5 70.5,25.5 70,24.5 68.6,23.6 68.6,21.5 62,23.5 61.2,24 61.6,25.2 63.2,27.2 62.5,29.8 61.6,31.5 60.9,33.5'],
+IN:['India','75.3,35 77,34.5 80,32.5 81.5,30.3 84,28.4 88,27.6 89.5,26.8 92,26.5 92.8,24 92.4,21 92,17 86,13 80.5,10.4 79.4,9.4 78,7 77,6.5 74,7.5 70,12 68.6,21.5 68.6,23.6 70,24.5 70.5,25.5 71,27.5 72,30 73.8,32.5 75,33'],
+AT:['Anatolia','26.2,40.1 27.5,40.5 29,41.1 29.2,42.5 41.5,42.6 42.5,41.3 43.5,40.5 44.3,39.7 44,38.4 43.8,37.2 42,37.4 41.3,37.3 40,37.7 38.7,37.3 37.5,37.2 36.7,37 36,36.8 35,36 30,35.5 27,35.8 26.2,36.5'],
+BA:['Balcanes','13.5,45.2 15.2,45.3 17,45.2 19,45 20.5,44.9 22.5,44.4 25,43.8 27,44.1 28.6,44.6 29,45 29.2,42.5 29,41.1 27.5,40.5 26.2,40.1 26.2,36.5 26,34.8 21,34.8 19.5,36.5 19,39 18.8,40.3 18.2,41.4 16.5,42.8 14.5,44']});
+RG.SC=['Estados cruzados (Outremer)','34.25,31.25 34.9,33 35,36 36,36.8 36.8,36.5 36.4,35.2 36,34.2 35.9,33.4 35.7,32.5 35.5,31.5 35.2,30.8'];
+RG.HG=['Hungría otomana','16.5,46 17.5,47 18.5,47.8 19.5,48.3 21.5,48.2 22.5,47.5 22,46.2 21.2,45.3 20.5,44.9 19,45 17,45.2 16,45.4'];
+RK.push('SC','HG');RK.forEach(k=>RP[k]=P(RG[k][1]));
+const LB={AR:[45,24],SY:[38,34.8],EG:[30,26.5],IF:[14,30],MA:[-3,32],AS:[-6.2,38],AC:[-3.8,39.7],AE:[-0.3,41.6],GR:[-3.8,36.9],SI:[13.8,37.5],IR:[44.5,33.5],PE:[54,32],JU:[65,41],SD:[66,31],IN:[80,23],AT:[33,39],BA:[21,42.5],SC:[35.4,34],HG:[19.5,47]};RK.forEach(k=>RC[k]=[X(LB[k][0]),Y(LB[k][1])]);
+const PW={M:['Estado de Medina','#2e8b57','Comunidad (umma) fundada por Mahoma en 622.'],R:['Rashidun','#1f9d55','Cuatro primeros califas, elegidos en Medina (632-661).'],
+O:['Omeyas','#e0a800','Califato hereditario de Damasco (661-750).'],A:['Abasíes','#2f6db5','Califato de Bagdad (750-1258); autoridad cada vez más simbólica desde el s. IX.'],
+a:['Omeyas de Córdoba','#c0392b','Emirato (756) y califato (929-1031) en al-Ándalus.'],F:['Fatimíes','#1a9e8f','Califato chií ismailí (909-1171); El Cairo desde 969.'],
+g:['Aglabíes','#8e6bbf','Emires de Ifriqiya (800-909); conquistaron Sicilia.'],T:['Tuluníes','#d98324','Gobernadores autónomos de Egipto y Siria (868-905).'],
+I:['Idrisíes','#16a085','Primera dinastía del Magreb occidental; fundaron Fez.'],Z:['Samaníes','#6fa8a8','Dinastía persa suní de Transoxiana y Jorasán (819-999).'],
+B:['Búyidas','#5e8c31','Emires chiíes que tutelaron a los califas abasíes (945-1055).'],H:['Ghaznavíes','#7b5546','Imperio turco de Afganistán, Sind y Panyab.'],
+S:['Selyúcidas','#c2185b','Turcos suníes: Gran Imperio selyúcida y Sultanato de Rum.'],C:['Estados cruzados','#9aa6b8','Condados y reino latino de Jerusalén (1098-1291).'],
+Y:['Ayyubíes','#d4a017','Dinastía de Saladino (1171-1250).'],m:['Mamelucos','#e67e22','Sultanato de soldados-esclavos en Egipto y Siria (1250-1517).'],
+L:['Almorávides','#4d4d4d','Imperio bereber del Sahara a al-Ándalus (1056-1147).'],D:['Almohades','#8fb339','Imperio bereber reformista (1121-1269).'],
+q:['Hafsíes / Mariníes','#9b59b6','Sucesores de los almohades en Ifriqiya y Marruecos.'],t:['Taifas','#f39c12','Pequeños reinos andalusíes tras 1031.'],
+N:['Nazaríes','#e74c3c','Reino de Granada (1238-1492), último estado andalusí.'],K:['Mongoles','#6c7a89','Imperio mongol e ilkanato de Persia.'],
+E:['Sultanato de Delhi','#8d6e63','Sultanato musulmán del norte de la India (1206-1526).'],i:['Timúridas / turcomanos','#7f8c8d','Poderes túrquico-mongoles de Persia y Asia central.'],
+U:['Otomanos','#b91c1c','Imperio fundado c. 1299; califato otomano reivindicado desde 1517.'],W:['Safávidas','#1abc9c','Imperio persa chií duodecimano (1501-1736).'],
+G:['Mogoles','#d35400','Imperio túrquico-persa de la India (1526-1857).'],j:['Janatos uzbekos','#5d6d7e','Shaybánidas y janatos de Asia central.'],
+s:['Saadíes','#27ae60','Dinastía sharifiana de Marruecos.'],l:['Alauíes','#2ecc71','Dinastía de Marruecos desde 1666.'],
+p:['Persia qayar','#00897b','Dinastía qayar (1789-1925).'],e:['Potencias coloniales','#566573','Imperios británico, francés, ruso e italiano.'],
+X:['Reinos cristianos / otros','#a5adbb','Reinos cristianos ibéricos, Bizancio o Europa.']};
+const ST={d:'Control directo',t:'Tributario o vasallo',i:'Zona de influencia',c:'Territorio disputado'};
+const PER=[
+{y:632,c:'Md -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --',t:'Arabia y el Estado de Medina',x:'Arabia no era un vacío: rutas caravaneras unían Bizancio, Persia y Yemen; La Meca (Kaaba, tribu Quraysh) era nudo comercial y religioso, con comunidades judías y cristianas. Mahoma (c. 570-632), tras la Hégira (622), forma la umma en Medina y unifica gran parte de Arabia. Los datos proceden sobre todo de la tradición islámica; los historiadores debaten detalles.'},
+{y:661,c:'Rd Rd Rd Ri -- -- -- -- -- -- Rd Rd Ri -- -- -- --',t:'Califas ortodoxos (632-661)',x:'Abu Bakr (guerras de apostasía), Umar (Siria, Egipto, Persia), Uthman (códice coránico) y Ali. Bizancio y Persia, agotados por décadas de guerra, y un ejército móvil explican la rapidez. La Primera Fitna (656-661; Siffin, 657) abre las divisiones suní, chií y jariyí: procesos graduales, no un cisma inmediato.'},
+{y:750,c:'Od Od Od Od Od Od Od Od Od -- Od Od Od Od -- -- --',t:'Califato omeya (661-750)',x:'Muawiya funda la dinastía en Damasco. Abd al-Malik arabiza la administración y acuña moneda propia; al-Walid I alcanza la máxima extensión: Magreb, Hispania (711), Transoxiana y Sind. Los mawali (conversos no árabes) reclaman igualdad: una tensión que acaba en la revolución abasí (750). Poitiers (732) y Talas (751) fijan los límites.'},
+{y:900,c:'Ad Td Td gd Id ad ad ac ad gd Ad At Zd At -- -- --',t:'Abasíes y primeras fragmentaciones',x:'Los abasíes trasladan el poder a Irak; Bagdad (762) es capital de la Edad de Oro (Casa de la Sabiduría, traducciones del griego y del persa). Pero ya surgen poderes autónomos: omeyas de Córdoba (756), idrisíes, aglabíes, tuluníes, samaníes. El califa conserva prestigio religioso, no control efectivo.'},
+{y:1000,c:'Fi Fc Fd Ft Fi ad ad ad ad Ft Bd Bd Hc Hd -- -- --',t:'Tres califatos rivales',x:'Coexisten el califato abasí (Bagdad, bajo tutela búyida), el fatimí chií (El Cairo, 969) y el omeya de Córdoba (929), con Almanzor en su apogeo. Islam no equivale a un único Estado: hay una comunidad religiosa compartida y muchos poderes políticos. Ghaznavíes en Afganistán y el Indo.'},
+{y:1100,c:'Si Cc Fd Ft Ld Ld Xc td Ld Xd Sd Sd Sd Hd -- Sd --',t:'Selyúcidas, cruzadas y taifas',x:'Los turcos selyúcidas protegen al califa suní y vencen a Bizancio en Manzikert (1071). La Primera Cruzada (1099) crea estados latinos en el Levante. En al-Ándalus, tras el fin del califato (1031) surgen las taifas; Toledo cae en 1085 y los almorávides las unifican desde 1086.'},
+{y:1250,c:'Yi Yd md qd qc Xd Xd Xd Nd Xd Ad Kd Kd Ed Ed Kt --',t:'Ayyubíes, mamelucos y Reconquista',x:'Saladino (Hattin, 1187) crea el sultanato ayyubí; en 1250 los mamelucos toman Egipto. Los almohades se hunden tras Las Navas de Tolosa (1212); Castilla toma Córdoba (1236) y Sevilla (1248): solo resiste Granada (nazarí). El sultanato de Delhi domina el norte de la India.'},
+{y:1300,c:'mi md md qd qd Xd Xd Xd Nd Xd Kd Kd Kc Ed Ed Kt --',t:'Mongoles y nuevo centro de gravedad',x:'Hulagu toma Bagdad (1258) y acaba con el califato abasí de Bagdad. Los mamelucos detienen a los mongoles en Ayn Yalut (1260) y acogen a un califa simbólico en El Cairo. El ilkanato persa se islamiza. El poder pasa a El Cairo, Persia y Anatolia, donde nace el beylicato otomano (Osman I, c. 1299).'},
+{y:1453,c:'md md md qd qd Xd Xd Xd Nd Xd ic id id Ec Ec Ud Ud',t:'Ascenso otomano',x:'Los otomanos pasan a los Balcanes (Kosovo 1389, Nicópolis 1396). Mehmed II conquista Constantinopla el 29 de mayo de 1453 y la convierte en capital. Mientras, mamelucos en Oriente Próximo, timúridas en Persia, hafsíes y mariníes en el Magreb, nazaríes en Granada: pluralidad política.'},
+{y:1500,c:'md md md qd qd Xd Xd Xd Xd Xd ic Wc jd Ed Ed Ud Ud',t:'Tres imperios en formación',x:'Cae Granada (1492). Shah Ismail I funda el imperio safávida (1501) e impone el chiismo duodecimano; los otomanos, suníes, son su gran rival (Chaldiran, 1514). Selim I conquistará Siria y Egipto (1516-17); Babur funda el imperio mogol (1526).'},
+{y:1600,c:'Ud Ud Ud Ut sd Xd Xd Xd Xd Xd Uc Wd jd Gd Gd Ud Ud',t:'Apogeo otomano, safávida y mogol',x:'Solimán el Magnífico (1520-66): Belgrado, Mohács, primer cerco de Viena (1529) y dominio del Mediterráneo oriental; Lepanto (1571) frena el avance naval. Millets, jenízaros y fiscalidad sostienen un imperio plural. Akbar consolida el imperio mogol; Abbas I hace de Isfahán la capital safávida.'},
+{y:1700,c:'Ut Ud Ud Ut ld Xd Xd Xd Xd Xd Ud Wd jd Gd Gd Ud Ud',t:'Máxima extensión y primeros reveses',x:'El fracaso ante Viena (1683) y la paz de Karlowitz (1699) inician el retroceso otomano en Europa. Aurangzeb lleva el imperio mogol a su extensión máxima (c. 1707), seguida de su desintegración. Los safávidas caen en 1722. Marruecos alauí se mantiene independiente.'},
+{y:1800,c:'Ut Ud Uc Ut ld Xd Xd Xd Xd Xd Ud pd jd pc ec Ud Ud',t:'Crisis y expansión europea',x:'Napoleón invade Egipto (1798); la Compañía Británica de las Indias Orientales domina la India (el Mogol sobrevive nominalmente hasta 1857); Rusia avanza en el Cáucaso y Asia Central. Reformas otomanas (Selim III, Tanzimat de 1839), nacionalismos balcánicos y Egipto de Mehmed Alí.'},
+{y:1914,c:'Ud Ud ed ed ed Xd Xd Xd Xd Xd Ud pc ed ed ed Ud --',t:'Colonialismo y fin del imperio',x:'Francia: Argelia (1830), Túnez (1881), Marruecos (1912); Gran Bretaña: Egipto (1882), India; Italia: Libia (1911). El Imperio otomano entra en la Gran Guerra (1914). Sèvres (1920), Lausana (1923), abolición del sultanato (1922) y del califato (1924) por Mustafa Kemal: nacen los estados modernos.'}];
+const RA={};RK.forEach(k=>{const q=RP[k].split(' ').map(s=>s.split(',').map(Number));let a=0;q.forEach((p,i)=>{const r=q[(i+1)%q.length];a+=p[0]*r[1]-r[0]*p[1]});RA[k]=Math.abs(a)});const OV={1100:{SC:'Cd',SY:'Sc'},1250:{SC:'Cd'},1600:{HG:'Ud'}};PER.forEach(p=>{const a=p.c.split(' '),o=OV[p.y]||{};a.push(a[RK.indexOf('SY')],'--');for(const k in o)a[RK.indexOf(k)]=o[k];p.c=a.join(' ')});
+const CITY=[['La Meca',39.8,21.4,600,'Santuario de la Kaaba y nudo caravanero, cuna de Mahoma; meta de la peregrinación (hach).',0],
+['Medina',39.6,24.5,622,'Antigua Yazrib; sede de la primera umma y capital de los rashidun.',0],
+['Damasco',36.3,33.5,661,'Capital omeya; después gran centro comercial y capital regional.',0],
+['Jerusalén',35.2,31.8,638,'Conquistada en 638; Cúpula de la Roca (691); capital cruzada (1099-1187).',0],
+['Kairuán',10.1,35.7,670,'Fundada en 670; base de la conquista del Magreb; capital aglabí.',0],
+['Bagdad',44.4,33.3,762,'Fundada por al-Mansur: capital abasí, Casa de la Sabiduría; tomada por los mongoles en 1258.',1],
+['Córdoba',-4.8,37.9,711,'Capital de al-Ándalus; califato desde 929; mezquita, bibliotecas y una de las mayores ciudades de Europa.',1],
+['Sevilla',-6,37.4,711,'Gran ciudad andalusí; capital almohade en al-Ándalus; conquistada en 1248.',0],
+['Toledo',-4,39.9,711,'Taifa y centro de traducción; conquistada por Castilla en 1085.',1],
+['Zaragoza',-0.9,41.7,714,'Capital de la Marca Superior y taifa de los Banu Hud; cae en 1118.',0],
+['Valencia',-0.4,39.5,714,'Ciudad agrícola de regadío; el Cid (1094-99); conquistada en 1238.',0],
+['Granada',-3.6,37.2,1010,'Capital nazarí desde 1238; Alhambra; cae el 2 de enero de 1492.',1],
+['Fez',-5,34,808,'Fundada por los idrisíes; universidad al-Qarawiyyin (859).',1],
+['Marrakech',-8,31.6,1070,'Fundada por los almorávides; capital almohade.',0],
+['El Cairo',31.2,30,969,'Fundada por los fatimíes; al-Azhar; capital ayyubí y mameluca.',1],
+['Samarcanda',67,39.7,700,'Oasis de la Ruta de la Seda; capital timúrida; observatorio de Ulugh Beg.',1],
+['Isfahán',51.7,32.6,1051,'Capital selyúcida y, desde 1598, safávida.',1],
+['Delhi',77.2,28.6,1206,'Capital del Sultanato y luego del Imperio mogol (con Agra).',0],
+['Bursa',29.1,40.2,1326,'Primera gran capital otomana; luego Edirne.',0],
+['Constantinopla / Estambul',29,41,1453,'Capital bizantina; conquistada en 1453; capital otomana y centro del imperio.',0]];
+const BAT=[['Badr',624,38.8,23.7,'Musulmanes de Medina vs. Quraysh. Victoria musulmana: primera gran victoria de Mahoma.'],
+['Uhud',625,39.6,24.6,'Medina vs. Quraysh. Derrota táctica musulmana que prueba a la umma.'],
+['Siffin',657,39,35.9,'Ali vs. Muawiya. Sin vencedor y con arbitraje: origen de la escisión jariyí y consolidación del partido chií.'],
+['Karbala',680,44,32.6,'Husayn ibn Ali vs. tropas de Yazid I. Victoria omeya; el martirio de Husayn es símbolo central del chiismo.'],
+['Guadalete',711,-6,36.5,'Tariq ibn Ziyad vs. el rey visigodo Rodrigo. Victoria musulmana: inicio de al-Ándalus.'],
+['Poitiers / Tours',732,0.4,46.6,'Carlos Martel vs. ejército andalusí. Victoria franca; su trascendencia real es debatida.'],
+['Talas',751,72,42.5,'Abasíes y tibetanos vs. dinastía Tang. Victoria abasí; fija el límite oriental.'],
+['Manzikert',1071,42.5,39.1,'Alp Arslan (selyúcidas) vs. Bizancio. Victoria selyúcida: abre Anatolia a los turcos.'],
+['Hattin',1187,35.4,32.8,'Saladino vs. Reino de Jerusalén. Victoria ayyubí; recuperación de Jerusalén.'],
+['Las Navas de Tolosa',1212,-3.6,38.3,'Coalición cristiana vs. almohades. Victoria cristiana: abre el Guadalquivir.'],
+['Caída de Bagdad',1258,44.4,33.3,'Hulagu vs. califa al-Mustasim. Victoria mongola; fin del califato abasí en Bagdad.'],
+['Kosovo',1389,21.1,42.6,'Otomanos de Murad I vs. serbios. Resultado táctico incierto; ventaja estratégica otomana en los Balcanes.'],
+['Nicópolis',1396,24.9,43.7,'Bayaceto I vs. cruzada húngaro-francesa. Victoria otomana.'],
+['Constantinopla',1453,29,41,'Mehmed II vs. Constantino XI. Victoria otomana: fin del Imperio bizantino.'],
+['Viena (1529)',1529,16.4,48.2,'Solimán vs. Habsburgo. Cerco fracasado: límite del avance otomano.'],
+['Lepanto',1571,21,38.3,'Liga Santa vs. otomanos. Victoria naval cristiana, sin cambiar el dominio otomano del Mediterráneo oriental.'],
+['Viena (1683)',1683,16.4,48.2,'Kara Mustafa vs. Liga Santa (Sobieski). Derrota otomana: inicio del retroceso en Europa.']];
+const RT=[['e',622,632,'39.8,21.4 39.6,24.5','Hégira'],['e',632,661,'39.6,24.5 36.3,33.5 35.2,31.8 31.2,30.1 20,31','Rashidun: Siria y Egipto'],['e',632,661,'36.3,33.5 44.4,33.3 51.7,32.6 61,36','Rashidun: Persia'],
+['e',661,750,'20,31 10.1,35.7 -5.5,35.8 -4.8,37.9','Magreb e Hispania'],['e',661,750,'61,36 67,39.7 72,41','Asia Central'],['e',661,750,'56,27 61,25.3 68,24.5','Sind'],
+['c',1096,1291,'12,45 22,43 29,41 36,36.5 35.2,31.8','Cruzada'],['m',1219,1260,'70,43 67,39.7 61,36 51.7,32.6 44.4,33.3 36.3,33.5','Mongoles'],
+['o',1299,1683,'29.1,40.2 29,41 22,41 20.5,44.8 16.4,48.2','Otomanos hacia Europa'],['o',1514,1517,'36,37 31.2,30','Selim I'],
+['t',650,1700,'67,39.7 61,36 51.7,32.6 44.4,33.3 36.3,33.5 28,36.7','Ruta de la Seda'],['t',750,1700,'47.8,30.5 56.5,26.3 68,23.2 74,16','Índico'],['t',700,1700,'10.1,35.7 6,28 4,22','Sahara']];
+const PL=[['Mahoma','c. 570-632','Profeta del Islam','Mercader qurayshí; según la tradición recibió el Corán desde 610. La Hégira (622) inicia la umma en Medina.','M'],
+['Abu Bakr','573-634','Primer califa','Suegro y compañero de Mahoma; sofocó la ridda (apostasía) y consolidó Arabia.','R'],
+['Umar ibn al-Jattab','c. 584-644','Segundo califa','Conquistó Siria, Egipto y Persia; creó el diwan (registro de pagos) y el calendario hegiriano.','R'],
+['Uthman ibn Affan','c. 576-656','Tercer califa','Según la tradición, fijó el texto canónico del Corán; su nepotismo provocó revueltas y su asesinato.','R'],
+['Ali ibn Abi Talib','c. 600-661','Cuarto califa','Primo y yerno de Mahoma; Siffin y el arbitraje dividieron a sus seguidores (chiíes y jariyíes).','R'],
+['Muawiya I','602-680','Primer califa omeya','Gobernador de Siria; fundó el califato dinástico desde Damasco.','O'],
+['Abd al-Malik','646-705','Califa omeya','Arabizó la administración, acuñó el dinar y erigió la Cúpula de la Roca.','O'],
+['Al-Walid I','c. 668-715','Califa omeya','Con él se conquistan Hispania, Transoxiana y Sind; levantó la mezquita de Damasco.','O'],
+['Abu al-Abbas al-Saffah','721-754','Primer califa abasí','Triunfó en la revolución de 750 y eliminó a los omeyas.','A'],
+['Harún al-Rashid','766-809','Califa abasí','Apogeo de Bagdad; asociado a las Mil y una noches.','A'],
+['Al-Mamún','786-833','Califa abasí','Impulsó la Casa de la Sabiduría y la traducción del griego.','A'],
+['Al-Juarismi','c. 780-850','Matemático','Sentó las bases del álgebra y difundió el sistema decimal indio.','A'],
+['Al-Razi','865-925','Médico','Distinguió sarampión y viruela; práctica clínica experimental.','A'],
+['Al-Farabi','c. 872-950','Filósofo','Comentó a Aristóteles y Platón; filosofía política.','A'],
+['Avicena (Ibn Sina)','980-1037','Médico y filósofo','Autor del Canon de medicina, texto de referencia en Europa durante siglos.','B'],
+['Al-Biruni','973-1048','Sabio','Astronomía, geografía y cultura de la India; midió el radio terrestre.','H'],
+['Al-Idrisi','c. 1100-1165','Geógrafo','Elaboró para Roger II de Sicilia un gran planisferio y su libro geográfico.','X'],
+['Averroes (Ibn Rushd)','1126-1198','Filósofo y juez','Cordobés; comentó a Aristóteles e influyó en la escolástica latina.','D'],
+['Abd al-Rahman I','731-788','Emir de Córdoba','Superviviente omeya; fundó el emirato independiente (756).','a'],
+['Abd al-Rahman III','889-961','Emir y califa','Proclamó el califato (929) y fundó Medina Azahara.','a'],
+['Al-Hakam II','915-976','Califa de Córdoba','Mecenas; reunió una gran biblioteca.','a'],
+['Almanzor','c. 938-1002','Hayib (primer ministro)','Gobernó de facto bajo Hisham II; campañas contra los reinos cristianos.','a'],
+['Yusuf ibn Tasufin','c. 1009-1106','Emir almorávide','Fundó Marrakech; venció en Sagrajas (1086).','L'],
+['Ibn Tumart','c. 1080-1130','Fundador almohade','Reformador religioso bereber, origen del movimiento almohade.','D'],
+['Saladino (Salah al-Din)','1137-1193','Sultán ayyubí','Unió Egipto y Siria; venció en Hattin (1187) y recuperó Jerusalén.','Y'],
+['Gengis Kan','c. 1162-1227','Gran kan mongol','Creó el imperio mongol y destruyó el Joresmio.','K'],
+['Hulagu','1217-1265','Il-kan','Tomó Bagdad (1258) y fundó el ilkanato de Persia.','K'],
+['Osman I','c. 1258-1326','Fundador otomano','Caudillo de un beylicato turco en el noroeste de Anatolia.','U'],
+['Mehmed II','1432-1481','Sultán otomano','Conquistó Constantinopla (1453) y la hizo capital.','U'],
+['Selim I','1470-1520','Sultán otomano','Venció en Chaldiran (1514) y conquistó Siria y Egipto.','U'],
+['Solimán el Magnífico','1494-1566','Sultán otomano','Apogeo del imperio; legislador (Kanuni); cercó Viena (1529).','U'],
+['Shah Ismail I','1487-1524','Fundador safávida','Impuso el chiismo duodecimano en Persia.','W'],
+['Akbar','1542-1605','Emperador mogol','Consolidó el imperio con administración centralizada y tolerancia religiosa.','G']];
+const EV=[[610,'Primera revelación','r',39.8,21.4],[622,'Hégira a Medina','r',39.6,24.5],[630,'Conquista de La Meca','e',39.8,21.4],[632,'Muerte de Mahoma','r',39.6,24.5],[636,'Yarmuk: conquista de Siria','e',36,32.8],[656,'Primera Fitna','f',39.6,24.5],
+[661,'Omeyas en Damasco','d',36.3,33.5],[711,'Conquista de Hispania','e',-5.6,36],[750,'Revolución abasí','d',44.4,33.3],[756,'Emirato de Córdoba','f',-4.8,37.9],[762,'Fundación de Bagdad','c',44.4,33.3],
+[909,'Fatimíes en Ifriqiya','f',10.1,35.7],[929,'Califato de Córdoba','f',-4.8,37.9],[969,'Fatimíes fundan El Cairo','d',31.2,30],[1031,'Fin del califato: taifas','f',-4.8,37.9],[1055,'Selyúcidas en Bagdad','d',44.4,33.3],
+[1071,'Manzikert','g',42.5,39.1],[1099,'Primera Cruzada: Jerusalén','g',35.2,31.8],[1187,'Hattin','g',35.4,32.8],[1212,'Las Navas de Tolosa','g',-3.6,38.3],[1250,'Mamelucos en Egipto','d',31.2,30],
+[1258,'Caída de Bagdad','g',44.4,33.3],[1299,'Osman I','d',29.9,40],[1453,'Caída de Constantinopla','g',29,41],[1492,'Caída de Granada','g',-3.6,37.2],[1516,'Selim I: Siria y Egipto','e',37,36],
+[1526,'Imperio mogol','d',77.2,28.6],[1529,'Cerco de Viena','g',16.4,48.2],[1571,'Lepanto','g',21,38.3],[1683,'Segundo cerco de Viena','g',16.4,48.2],[1839,'Tanzimat','f',29,41],[1924,'Abolición del califato','r',32.9,39.9]];
+const TC={e:'#1f9d55',g:'#c0392b',d:'#2f6db5',c:'#d4a017',f:'#8e44ad',r:'#16a085'},TN={e:'Expansión',g:'Guerra',d:'Cambio dinástico',c:'Cultura',f:'Fragmentación',r:'Religión'};
+const GL={'Islam':'Religión monoteísta («sumisión a Dios»); su comunidad no es un único Estado.','Musulmán':'Persona que profesa el Islam.','Califa':'«Sucesor» de Mahoma al frente de la comunidad; su poder real varió mucho.','Califato':'Institución del califa y, por extensión, el territorio que gobierna.','Sultán':'Gobernante con poder político (militar), a menudo reconociendo nominalmente al califa.','Emir':'Gobernador o príncipe; también soberano de un emirato.','Dinastía':'Familia que transmite el poder hereditariamente.','Suní':'Mayoría musulmana; reconoce a los cuatro primeros califas y la Sunna.','Chií':'Partidarios de Ali y sus descendientes como imames.','Jariyí':'Corriente surgida tras Siffin que rechazó el arbitraje; la ibadí es su heredera.','Umma':'Comunidad de creyentes.','Sharia':'Conjunto de normas derivado del Corán, la Sunna y la jurisprudencia (fiqh).','Mezquita':'Lugar de oración y de vida comunitaria.','Madraza':'Escuela superior de ciencias religiosas y jurídicas.','Hégira':'Emigración de Mahoma a Medina (622); inicia el calendario islámico.','Yihad':'«Esfuerzo»: espiritual y moral, y también lucha armada según el contexto.','Dhimmi':'Cristianos, judíos y otros «protegidos», con estatuto propio y tributo.','Millet':'Comunidad religiosa con autonomía interna en el Imperio otomano.'};
+const QS=[['¿Por qué la expansión inicial fue tan rápida?',661,'Bizancio y Persia estaban agotados, los ejércitos eran móviles y se aceptaba tributo de las poblaciones sometidas. Compara 632 y 661.','e'],
+['¿Qué diferencias hubo entre omeyas y abasíes?',900,'Omeyas: élite árabe, capital siria, mirada mediterránea. Abasíes: integran a los persas y miran a Oriente desde Irak. Compara 750 y 900.','t'],
+['¿Por qué se fragmentó el mundo islámico?',1000,'Distancia, ejércitos regionales, rivalidades dinásticas y religiosas. Cuenta los tres califatos de 1000.',''],
+['¿Qué importancia tuvo Bagdad?',900,'Capital política, centro de traducción y nodo comercial entre Asia y el Mediterráneo hasta 1258.','cul'],
+['¿Cómo evolucionó al-Ándalus?',1100,'Activa la capa Al-Ándalus y recorre 750, 900, 1000, 1100, 1250 y 1500.','and'],
+['¿Qué consecuencias tuvo la caída de Bagdad?',1300,'Desaparece el califato abasí de Bagdad; el poder se desplaza a El Cairo, Persia y Anatolia.','m'],
+['¿Por qué fue clave Constantinopla?',1453,'Controla el paso entre Europa y Asia y el comercio del Mediterráneo oriental, y da prestigio imperial.','o'],
+['¿Cómo coexistieron los poderes políticos?',1600,'Otomanos suníes, safávidas chiíes y mogoles conviven con rivalidad, pero comparten comercio y cultura.',''],
+['¿Qué relación hubo entre comercio y expansión?',900,'Seda, Índico y Sahara explican la riqueza de ciudades como Bagdad, El Cairo y Samarcanda.','t'],
+['¿Qué elementos culturales llegaron a Europa?',1100,'Álgebra, cifras indoarábigas, Aristóteles traducido, medicina de Avicena y regadío. Mira Toledo y Córdoba.','cul']];
+const GD=[[632,'Arabia preislámica',45,24,3,'t','Antes de Mahoma, Arabia está conectada con Bizancio, Persia, Yemen y Etiopía. Observa las rutas comerciales: La Meca prospera porque es nudo caravanero y santuario.'],
+[632,'Mahoma',40,23,6,'e','Entre 610 y 632 una predicación religiosa se convierte en proyecto político. Es el origen de la umma, no de un imperio.'],
+[632,'La Hégira',40,23,6,'e','622 es el año 1 del calendario islámico: Medina pasa a ser la base de una comunidad con tribus aliadas.'],
+[661,'Califas ortodoxos',42,30,2.5,'e','En 30 años la comunidad conquista Siria, Egipto y Persia. La Primera Fitna muestra que unidad religiosa no es unidad política.'],
+[750,'Omeyas',20,33,1.4,'e','Damasco gobierna desde Hispania hasta el Indo: uno de los mayores Estados de su época.'],
+[900,'Abasíes',45,33,2,'t','El poder se desplaza a Irak, pero ya aparecen poderes autónomos en Córdoba, Egipto, el Magreb y Persia.'],
+[1000,'Fragmentación',25,32,1.5,'','Tres califatos rivales y una constelación de dinastías: la comunidad religiosa persiste, la unidad política no.'],
+[1100,'Al-Ándalus',-4,38,5,'and','De emirato dependiente a califato, taifas, almorávides, almohades y Granada: una historia propia conectada con el Magreb y Oriente.'],
+[1100,'Cruzadas',34,33,3,'c','Los estados latinos nacen de la fragmentación musulmana del Levante; Saladino los vence al reunificar Egipto y Siria.'],
+[1300,'Mongoles',50,34,2,'m','1258 destruye el califato de Bagdad. Los mamelucos, que frenan a los mongoles, heredan el prestigio.'],
+[1453,'Otomanos',29,40,3.5,'o','Del beylicato de Osman a la conquista de Constantinopla: culminación de un largo proceso, no origen del mundo islámico.'],
+[1600,'Imperios modernos',45,35,1.5,'','Otomanos, safávidas y mogoles: tres imperios suníes y chiíes con proyectos distintos.'],
+[1914,'Fin del califato',35,33,1.3,'e','El colonialismo reduce territorios; en 1924 se abole el califato otomano y emergen los estados contemporáneos.']];
+const L={reg:1,city:1,bat:1,e:1,t:0,c:0,m:0,o:0,cul:0,and:0},LN={reg:'Territorios',city:'Ciudades',bat:'Batallas',e:'Expansión',t:'Rutas comerciales',c:'Cruzadas',m:'Mongoles',o:'Otomanos',cul:'Centros culturales',and:'Al-Ándalus'};
+const S={a:632,b:1453,cmp:0,vb:[0,0,1120,540],g:-1,tab:'x',drag:0};
+const per=y=>PER.find(p=>p.y==y),near=y=>PER.reduce((a,b)=>Math.abs(b.y-y)<Math.abs(a.y-y)?b:a).y;
+function svg(y){const cs=per(y).c.split(' ');let s='<svg preserveAspectRatio="xMidYMid meet"><defs><pattern id="h1" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--land)" opacity=".55"/></pattern><pattern id="h2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="3" height="6" fill="#c0392b" opacity=".6"/></pattern><marker id="ar" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0L6,3L0,6z" fill="#222"/></marker></defs>';
+s+=LAND?'<defs><path id="lp" fill-rule="evenodd" clip-rule="evenodd" d="'+LAND+'"/><clipPath id="lc"><use href="#lp"/></clipPath><filter id="ol" x="-3%" y="-3%" width="106%" height="106%"><feMorphology in="SourceAlpha" operator="dilate" radius="1.1" result="d"/><feComposite in="d" in2="SourceAlpha" operator="out" result="o"/><feFlood flood-color="#fff" flood-opacity=".9"/><feComposite in2="o" operator="in" result="b"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="b"/></feMerge></filter></defs><rect x="-50" y="-50" width="1250" height="650" class="sea"/><use href="#lp" class="land"/>':'<rect x="-50" y="-50" width="1250" height="650" class="land"/>';
+const reg=i=>{const c=cs[i];if(c=='--'||!L.reg||(i==17&&c==cs[1]))return'';const k=RK[i],w=PW[c[0]],st=c[1],a=L.and&&!'AS AC AE GR'.includes(k);
+let t='<g data-k="r:'+k+'" opacity="'+(a?.3:1)+'"><polygon points="'+RP[k]+'" fill="'+w[1]+'" fill-opacity="1" stroke="'+(L.and&&!a?'#7a5c00':w[1])+'" stroke-width="'+(L.and&&!a?2.5:.8)+'"'+(st=='t'?' stroke-dasharray="5 3"':'')+'/>';
+if(st=='i')t+='<polygon points="'+RP[k]+'" fill="url(#h1)"/>';if(st=='c')t+='<polygon points="'+RP[k]+'" fill="url(#h2)"/>';return t+'</g>'};
+if(LAND)s+='<g clip-path="url(#lc)">'+(()=>{const gs={};RK.forEach((k,i)=>{const t=reg(i);if(t)(gs[cs[i]]=gs[cs[i]]||[]).push(t)});return Object.keys(gs).map(c=>'<g filter="url(#ol)" opacity="'+{d:.85,t:.55,i:.35,c:.55}[c[1]]+'">'+gs[c].join('')+'</g>').join('')})()+'</g>';else RK.forEach((k,i)=>{if(k!='SI')s+=reg(i)});(LAND?[]:SEAS).forEach(q=>s+='<polygon class="sea" points="'+P(q)+'"/>');(LAND?[]:ISL).forEach(q=>s+='<polygon class="land" points="'+P(q)+'"/>');if(!LAND)s+=reg(9);
+RIV.forEach(q=>s+='<polyline class="riv" points="'+P(q)+'"/>');
+if(L.reg)RK.forEach((k,i)=>{const c=cs[i];if(c!='--'&&!(i==17&&c==cs[1])&&RK.every((k2,j)=>cs[j]!=c||RA[k2]<=RA[k]))s+='<text x="'+RC[k][0]+'" y="'+RC[k][1]+'" text-anchor="middle">'+PW[c[0]][0]+'</text>'});
+RT.forEach(r=>{if(L[r[0]]&&y>=r[1]&&y<=r[2]+120){const col={e:'#115c2e',t:'#8a6d00',c:'#7a1f1f',m:'#444',o:'#7a0f0f'}[r[0]];s+='<polyline points="'+P(r[3])+'" fill="none" stroke="'+col+'" stroke-width="2.2" stroke-dasharray="'+(r[0]=='t'?'2 4':'7 3')+'" marker-end="url(#ar)"><title>'+r[4]+'</title></polyline>'}});
+if(L.city)CITY.forEach((c,i)=>{if(c[3]<=y||c[3]<=y+30&&0){const cx=Math.round(X(c[1])),cy=Math.round(Y(c[2])),cu=L.cul&&c[5];s+='<g data-k="c:'+i+'" style="cursor:pointer"><circle cx="'+cx+'" cy="'+cy+'" r="10" fill="#0000"/>'+(cu?'<circle cx="'+cx+'" cy="'+cy+'" r="8" fill="none" stroke="#d4a017" stroke-width="2.5"/>':'')+'<circle cx="'+cx+'" cy="'+cy+'" r="3.5" fill="#222" stroke="#fff"/><text x="'+(cx+6)+'" y="'+(cy+3)+'" style="font-weight:600">'+c[0].split(' / ')[y>=1453?1:0]+'</text></g>'}});
+if(L.bat)BAT.forEach((b,i)=>{if(b[1]<=y){const cx=Math.round(X(b[2])),cy=Math.round(Y(b[3]));s+='<g data-k="b:'+i+'" style="cursor:pointer" opacity="'+(y-b[1]>250?.45:1)+'"><circle cx="'+cx+'" cy="'+cy+'" r="10" fill="#0000"/><path d="M'+(cx-5)+','+(cy-5)+'L'+(cx+5)+','+(cy+5)+'M'+(cx+5)+','+(cy-5)+'L'+(cx-5)+','+(cy+5)+'" stroke="#c0392b" stroke-width="3"/></g>'}});
+return s+'</svg>'}
+function applyVB(){document.querySelectorAll('#maps svg').forEach(e=>e.setAttribute('viewBox',S.vb.join(' ')))}
+function focus(lon,lat,z){const w=1120/z,h=w*540/1120;S.vb=[X(lon)-w/2,Y(lat)-h/2,w,h];clampVB();applyVB()}
+function clampVB(){const v=S.vb;v[0]=Math.max(0,Math.min(1120-v[2],v[0]));v[1]=Math.max(0,Math.min(540-v[3],v[1]))}
+function zoom(f){const v=S.vb,cx=v[0]+v[2]/2,cy=v[1]+v[3]/2,w=Math.max(140,Math.min(1120,v[2]/f)),h=w*540/1120;S.vb=[cx-w/2,cy-h/2,w,h];clampVB();applyVB()}
+function render(){const box=$('#maps');box.innerHTML='';[S.a].concat(S.cmp?[S.b]:[]).forEach((y,i)=>{const d=document.createElement('div');d.className='mp';d.innerHTML='<div class="cap">'+(S.cmp?(i?'B · ':'A · '):'')+y+' — '+per(y).t+'</div>'+svg(y);box.appendChild(d)});applyVB();
+$('#selY').value=S.a;$('#selB').value=S.b;$('#rng').value=S.a;
+$('#pb').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.y==S.a));legend();chips();tab()}
+function legend(){const cs=per(S.a).c.split(' '),seen={};cs.forEach(c=>{if(c!='--')seen[c[0]]=1});$('#leg').innerHTML='<b>Poderes en '+S.a+'</b><br>'+Object.keys(seen).map(k=>'<div><i style="background:'+PW[k][1]+'"></i>'+PW[k][0]+'</div>').join('')+'<hr><div class="mut">Opaco: control directo · Más claro: tributario · Trama gris: influencia · Franjas rojas: disputado. Costa actual (Natural Earth); límites históricos aproximados, no fronteras modernas.</div>'}
+function chips(){$('#chips').innerHTML=Object.keys(LN).map(k=>'<label><input type="checkbox" data-l="'+k+'"'+(L[k]?' checked':'')+'> '+LN[k]+'</label>').join('')}
+function det(h){$('#det').innerHTML=h}
+function setY(y,keep){S.a=near(y);if(!keep)S.g=-1;render()}
+function showR(k){const c=per(S.a).c.split(' ')[RK.indexOf(k)],nm=RG[k][0];let h='<h3>'+nm+' · '+S.a+'</h3>';
+if(c=='--')h+='<p>Fuera del control musulmán (o sin datos) en este corte. Pulsa otro período para ver cuándo cambia.</p>';else{const w=PW[c[0]];h+='<p><b>'+w[0]+'</b> · '+ST[c[1]]+'<br>'+w[2]+'</p><p class="mut">Territorio → dinastía → personajes:</p>'+PL.filter(p=>p[4]==c[0]).map(p=>'<button class="pl" data-p="'+PL.indexOf(p)+'">'+p[0]+'</button>').join('')}
+const es=EV.filter(e=>near(e[0])==S.a);h+='<p class="mut">Acontecimientos del período:</p>'+es.map(e=>'<span class="mut">'+e[0]+' · '+e[1]+'</span><br>').join('');det(h)}
+function showP(i){const p=PL[i];det('<h3>'+p[0]+'</h3><p class="mut">'+p[1]+' · '+p[2]+'</p><p>'+p[3]+'</p>')}
+function tab(){const t=S.tab;$('#tabs').innerHTML=[['x','Contexto'],['p','Personajes'],['g','Glosario'],['q','Preguntas'],['d','Guía']].map(a=>'<button data-t="'+a[0]+'"'+(a[0]==t?' class="on"':'')+'>'+a[1]+'</button>').join('');let h='';
+if(t=='x'){const p=per(S.a);h='<h3 style="font:600 16px Georgia,serif;margin:0 0 4px">'+S.a+' · '+p.t+'</h3><p>'+p.x+'</p><div class="call"><b>Islam no es igual a un Estado único.</b> Una comunidad religiosa (umma) puede estar dividida en califatos, sultanatos y emiratos; y un califa no controla necesariamente a todos los musulmanes. Autoridad religiosa y poder político no coinciden siempre.</div><b>Acontecimientos</b><br>'+EV.filter(e=>near(e[0])==S.a).map(e=>'<button class="ev" data-e="'+EV.indexOf(e)+'"><span style="color:'+TC[e[2]]+'">●</span> '+e[0]+' · '+e[1]+'</button>').join('')}
+if(t=='p')h=PL.map((p,i)=>'<button class="pl" data-p="'+i+'">'+p[0]+'</button>').join('');
+if(t=='g')h=Object.keys(GL).map(k=>'<details><summary><b>'+k+'</b></summary>'+GL[k]+'</details>').join('');
+if(t=='q')h=QS.map((q,i)=>'<button class="ev" data-q="'+i+'">'+q[0]+'</button>').join('');
+if(t=='d'){const g=GD[S.g];h=g?'<b>Paso '+(S.g+1)+' de '+GD.length+' · '+g[1]+'</b><p>'+g[6]+'</p><p class="mut">'+per(S.a).x+'</p>':'<p>Recorre la evolución del Islam paso a paso: el mapa y las capas cambian en cada etapa.</p>';h+='<button data-gs="-1">◀</button> <button data-gs="1">'+(S.g<0?'Empezar':'▶')+'</button>'}
+$('#tab').innerHTML=h}
+function goG(d){S.g=Math.max(0,Math.min(GD.length-1,S.g+d));const g=GD[S.g];['c','m','o','and','t'].forEach(k=>L[k]=0);if(g[5])L[g[5]]=1;S.a=near(g[0]);S.tab='d';render();focus(g[2],g[3],g[4]);det('<h3>'+g[1]+'</h3><p class="mut">'+per(S.a).t+'</p>')}
+function goEv(i){const e=EV[i];S.a=near(e[0]);S.g=-1;render();focus(e[3],e[4],3);det('<h3>'+e[0]+' · '+e[1]+'</h3><p style="color:'+TC[e[2]]+'">'+TN[e[2]]+'</p><p class="mut">Mapa ajustado al período '+S.a+'.</p>')}
+document.addEventListener('click',e=>{if(S.drag){S.drag=0;return}const t=e.target;let n;
+if(n=t.closest('[data-k]')){const a=n.dataset.k.split(':'),i=+a[1];if(a[0]=='r')showR(a[1]);if(a[0]=='c'){const c=CITY[i];det('<h3>'+c[0]+'</h3><p>'+c[4]+'</p><p class="mut">'+(c[5]?'Centro cultural y científico. ':'')+'Función histórica según el período seleccionado.</p>')}if(a[0]=='b'){const b=BAT[i];det('<h3>'+b[0]+' ('+b[1]+')</h3><p>'+b[4]+'</p>')}return}
+if(n=t.closest('[data-p]')){showP(+n.dataset.p);return}
+if(n=t.closest('[data-e]')){goEv(+n.dataset.e);return}
+if(n=t.closest('[data-q]')){const q=QS[+n.dataset.q];if(q[3])L[q[3]]=1;S.a=near(q[1]);S.g=-1;render();det('<h3>'+q[0]+'</h3><p>'+q[2]+'</p>');return}
+if(n=t.closest('[data-t]')){S.tab=n.dataset.t;tab();return}
+if(n=t.closest('[data-gs]')){goG(+n.dataset.gs);return}
+if(n=t.closest('[data-y]')){setY(+n.dataset.y);return}
+if(n=t.closest('[data-l]')){L[n.dataset.l]=n.checked?1:0;render()}});
+$('#bg').onclick=()=>{S.tab='d';goG(S.g<0?1:0);goG(-1)};$('#zi').onclick=()=>zoom(1.5);$('#zo').onclick=()=>zoom(1/1.5);$('#zr').onclick=()=>{S.vb=[0,0,1120,540];applyVB()};
+$('#selY').onchange=e=>setY(+e.target.value);$('#selB').onchange=e=>{S.b=+e.target.value;render()};$('#cmp').onchange=e=>{S.cmp=e.target.checked;render()};
+$('#selR').onchange=e=>{if(e.target.value){render();showR(e.target.value);const c=RC[e.target.value];focus(c[0]/10-12,50-c[1]/12,3)}};
+$('#rng').oninput=e=>setY(+e.target.value);
+const mp=$('#maps');mp.addEventListener('wheel',e=>{e.preventDefault();zoom(e.deltaY<0?1.2:1/1.2)},{passive:false});
+let dn=null;mp.addEventListener('pointerdown',e=>{dn={x:e.clientX,y:e.clientY};S.drag=0});
+addEventListener('pointermove',e=>{if(!dn)return;const dx=e.clientX-dn.x,dy=e.clientY-dn.y,sv=mp.querySelector('svg');if(Math.abs(dx)+Math.abs(dy)>5)S.drag=1;if(S.drag&&sv){const k=S.vb[2]/sv.clientWidth;S.vb[0]-=dx*k;S.vb[1]-=dy*k;clampVB();applyVB();dn={x:e.clientX,y:e.clientY}}});
+addEventListener('pointerup',()=>{dn=null});
+$('#selR').innerHTML='<option value="">Explorar región…</option>'+RK.map(k=>'<option value="'+k+'">'+RG[k][0]+'</option>').join('');
+const po=PER.map(p=>'<option value="'+p.y+'">'+p.y+'</option>').join('');$('#selY').innerHTML=po;$('#selB').innerHTML=po;
+$('#pb').innerHTML=PER.map(p=>'<button data-y="'+p.y+'">'+p.y+'</button>').join('');
+$('#dots').innerHTML=EV.map((e,i)=>'<i data-e="'+i+'" style="left:'+((e[0]-600)/1330*100)+'%;background:'+TC[e[2]]+'" title="'+e[0]+' · '+e[1]+' ('+TN[e[2]]+')"></i>').join('');
+det('<h3>Atlas del mundo islámico</h3><p>Elige un período, activa capas o pulsa un territorio, ciudad o batalla. Los límites son aproximaciones históricas, no fronteras modernas. Puntos de la cronología: verde expansión, rojo guerra, azul dinastía, dorado cultura, morado fragmentación, turquesa religión.</p>');
+render();
+</script></body></html>
