@@ -289,4 +289,21 @@ $('#pb').innerHTML=PER.map(p=>'<button data-y="'+p.y+'">'+p.y+'</button>').join(
 $('#dots').innerHTML=EV.map((e,i)=>'<i data-e="'+i+'" style="left:'+((e[0]-600)/1330*100)+'%;background:'+TC[e[2]]+'" title="'+e[0]+' · '+e[1]+' ('+TN[e[2]]+')"></i>').join('');
 det('<h3>Atlas del mundo islámico</h3><p>Elige un período, activa capas o pulsa un territorio, ciudad o batalla. Los límites son aproximaciones históricas, no fronteras modernas. Puntos de la cronología: verde expansión, rojo guerra, azul dinastía, dorado cultura, morado fragmentación, turquesa religión.</p>');
 render();
+  <script>
+  // Deshabilitar clic derecho
+  document.addEventListener('contextmenu', event => event.preventDefault());
+
+  // Deshabilitar atajos comunes para guardar o ver código fuente (F12, Ctrl+U, Ctrl+S, etc.)
+  document.addEventListener('keydown', function (e) {
+    if (
+      e.keyCode == 123 || // F12
+      (e.ctrlKey && e.shiftKey && e.keyCode == 73) || // Ctrl+Shift+I
+      (e.ctrlKey && e.keyCode == 85) || // Ctrl+U (Ver código fuente)
+      (e.ctrlKey && e.keyCode == 83)    // Ctrl+S (Guardar)
+    ) {
+      e.preventDefault();
+      return false;
+    }
+  });
+</script>
 </script></body></html>
