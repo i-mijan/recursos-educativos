@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Laboratorio de inversión</title>
+<style>
+:root{--bg:#F3F5F8;--cd:#fff;--ink:#14202E;--mut:#5A6877;--ln:#D9E0E8;--ac:#0D5C73;--pos:#17803F;--neg:#C5322B;--wn:#B56A00;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F1720;--cd:#17222E;--ink:#E8EEF4;--mut:#9AA9B8;--ln:#2A3846;--ac:#56B6D1;--pos:#4CC17D;--neg:#F0706A;--wn:#F0B040}}
+:root[data-theme="dark"]{--bg:#0F1720;--cd:#17222E;--ink:#E8EEF4;--mut:#9AA9B8;--ln:#2A3846;--ac:#56B6D1;--pos:#4CC17D;--neg:#F0706A;--wn:#F0B040}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums}
+.app{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh}
+nav{background:var(--cd);border-right:1px solid var(--ln);padding:20px 12px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto}
+nav h1{font-size:15px;margin:0 8px 2px;line-height:1.25}nav small{color:var(--mut);margin:0 8px;display:block;font-size:12px}
+#nv{list-style:none;margin:18px 0;padding:0}
+#nv button{width:100%;text-align:left;background:none;border:0;border-radius:8px;padding:9px 10px;color:var(--ink);display:flex;gap:10px}
+#nv b{color:var(--mut);min-width:18px}#nv .on{background:var(--bg);color:var(--ac);font-weight:600}
+.by{font-size:12px;color:var(--mut);margin:0 8px}.by b{color:var(--ink)}#lvl{margin:14px 8px;font-size:12px;color:var(--mut)}
+main{padding:22px clamp(14px,3vw,36px) 40px;max-width:1180px;min-width:0}
+main>header h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.02em;line-height:1.1;margin:0}
+main>header p{color:var(--mut);margin:6px 0 16px;max-width:60ch}h2{font-size:22px;margin:6px 0 12px}h3{margin:4px 0 8px}
+.panel{background:var(--cd);border:1px solid var(--ln);border-radius:10px;padding:16px 18px;margin:0 0 14px}
+.grid2{display:grid;grid-template-columns:minmax(250px,320px) minmax(0,1fr);gap:16px;align-items:start}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kp{background:var(--cd);border:1px solid var(--ln);border-radius:10px;padding:12px 14px}.kp small{color:var(--mut);display:block;font-size:12px}.kp b{font-size:24px;letter-spacing:-.02em;display:block}.kp em{font-style:normal;font-size:12px;color:var(--mut)}
+.ctl label{display:flex;justify-content:space-between;font-size:13px;margin-top:12px;color:var(--mut)}.ctl output{color:var(--ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--ac)}
+select,input[type=text]{width:100%;padding:8px;border:1px solid var(--ln);border-radius:8px;background:var(--cd);color:var(--ink);font:inherit}
+button{font:inherit;cursor:pointer}
+.chip,.opt{border:1px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:999px;padding:6px 12px;margin:0 6px 6px 0}
+.chip.on,.opt.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.opt{display:block;width:100%;text-align:left;border-radius:10px;padding:12px 14px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--ln);margin-bottom:14px;overflow-x:auto}.tabs button{background:none;border:0;padding:9px 14px;border-bottom:2px solid transparent;color:var(--mut);white-space:nowrap}.tabs .on{color:var(--ac);border-color:var(--ac);font-weight:600}
+.pane,.mod{display:none}.pane.on,.mod.on{display:block}
+svg.ch{width:100%;height:auto}svg text{font-size:11px;fill:var(--mut)}svg .pl{fill:var(--ink)}
+.lg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mut);margin-top:6px}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.hb{display:grid;grid-template-columns:minmax(100px,190px) 1fr 64px;gap:8px;align-items:center;font-size:13px;margin:5px 0}.hb b{text-align:right}
+.tr{position:relative;height:12px;background:var(--bg);border-radius:6px}.tr:after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;border-left:1px solid var(--mut)}.tr i{position:absolute;top:0;bottom:0;border-radius:6px}
+.stk{display:flex;height:34px;border-radius:8px;overflow:hidden;background:var(--bg)}.stk i{display:flex;align-items:center;justify-content:center;color:#fff;font:600 12px system-ui;font-style:normal;overflow:hidden;white-space:nowrap}
+.ov{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:top}th{color:var(--mut);font-weight:600}
+.hint{font-size:13px;color:var(--mut);margin:8px 0}.tag{display:inline-block;font-size:11px;font-weight:600;color:var(--wn);border:1px solid var(--wn);border-radius:4px;padding:1px 6px}
+.dots{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}.dots button{border:1px solid var(--ln);background:var(--cd);color:var(--ink);border-radius:8px;min-width:34px;height:34px;padding:0 10px}.dots .ok{border-color:var(--pos)}.dots .on{background:var(--ac);color:var(--bg)}
+.mt{height:8px;border-radius:4px;background:var(--bg);overflow:hidden;margin:3px 0 10px}.mt i{display:block;height:100%}
+.dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px}
+.warn{border-left:3px solid var(--wn);background:var(--cd);padding:10px 14px;font-size:13px;margin-bottom:14px}
+.ok{color:var(--pos)}.bad{color:var(--neg)}
+footer{font-size:12px;color:var(--mut);border-top:1px solid var(--ln);padding-top:12px;margin-top:20px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+@media(prefers-reduced-motion:no-preference){.stk i,.tr i,.mt i{transition:width .3s}}
+@media(max-width:900px){.app{display:block}.grid2{grid-template-columns:1fr}
+nav{position:sticky;top:env(safe-area-inset-top,0px);height:auto;z-index:5;padding:6px 8px;border:0;border-bottom:1px solid var(--ln)}
+nav h1,nav small,#lvl{display:none}#nv{display:flex;overflow-x:auto;gap:4px;margin:0}#nv button{white-space:nowrap;padding:8px 10px}.by{display:none}}
+@media print{nav,.tabs,button{display:none}.app{display:block}.mod{display:none}#m5{display:block}}
+</style></head><body>
+<div class="app">
+<nav><h1>Laboratorio de inversión</h1><small>Cultura Financiera</small><ol id="nv"></ol><div id="lvl"></div><div class="by">Realizado por <b>Ismael Miján</b></div></nav>
+<main>
+<header><h1>Laboratorio de inversión</h1><p>Descubre qué tipo de inversor eres, construye una cartera y comprueba qué ocurre con tu dinero.</p>
+<div class="warn"><span class="tag">SUPUESTOS EDUCATIVOS</span> Este simulador tiene finalidad exclusivamente educativa. Las rentabilidades son hipotéticas, las simulaciones no predicen el futuro y ningún resultado constituye una recomendación de inversión.</div></header>
+
+<section class="mod on" id="m0"><h2>Conócete</h2>
+<p class="hint">Siete situaciones. No hay respuestas correctas: miden cómo reaccionas y cuánto riesgo puedes permitirte. Puedes volver a cualquier pregunta.</p><div class="panel" id="qz"></div></section>
+
+<section class="mod" id="m1"><h2>Descubre</h2>
+<div class="tabs" data-g="a"><button data-t="e" class="on">Explorador</button><button data-t="c">Comparador</button></div>
+<div class="pane on" data-g="a" data-t="e"><div class="panel" id="pl"></div><div class="panel" id="pd"></div><div class="panel" id="pg"></div></div>
+<div class="pane" data-g="a" data-t="c"><div class="panel"><p class="hint">Elige hasta 4 productos. <span class="tag">Rentabilidad esperada = supuesto hipotético</span>, no histórica ni predicción.</p><div id="cl"></div><div class="ov" id="ct"></div></div>
+<div class="panel ctl"><div data-sl="amt|Cantidad a invertir|100|20000|100"></div><div data-sl="yrs|Años|1|40|1"></div><div id="co"></div></div></div></section>
+
+<section class="mod" id="m2"><h2>Simula</h2>
+<div class="tabs" data-g="b"><button data-t="s" class="on">Simulador</button><button data-t="i">Inflación</button><button data-t="f">Fiscalidad</button></div>
+<div class="pane on" data-g="b" data-t="s"><div class="grid2"><div class="panel ctl">
+<div data-sl="cap|Capital inicial|0|50000|500"></div><div data-sl="pmt|Aportación mensual|0|1000|10"></div><div data-sl="yrs|Duración|1|40|1"></div><div data-sl="ret|Rentabilidad anual (central)|0|12|.5"></div><div data-sl="inf|Inflación anual|0|10|.5"></div><div data-sl="tax|Impuesto sobre ganancias (supuesto)|0|30|1"></div>
+<label>Aportaciones mensuales</label><select data-k="tm"><option value="end">Al final de cada mes</option><option value="beg">Al principio de cada mes</option></select>
+<label>Cuándo se pagan impuestos</label><select data-k="tx"><option value="end">Al final (diferimiento: fondo, ETF, acciones)</option><option value="yearly">Cada año (depósito, bonos)</option></select>
+<label>Escenario</label><div><button class="chip" data-sc="pes">Pesimista</button><button class="chip" data-sc="cen">Central</button><button class="chip" data-sc="opt">Optimista</button><button class="chip" data-sc="var">Años variables</button></div>
+<div id="sq"><label>Rentabilidades anuales (%), separadas por comas; decimales con punto</label><input type="text" data-k="seq"></div>
+<p class="hint">Pesimista = central −3 puntos; optimista = central +3. Capitalización mensual compuesta. <span class="tag">Supuesto educativo</span></p></div>
+<div><div class="kpis" id="kp"></div><div class="panel" id="c1"></div><div class="panel" id="c2"></div><div class="panel" id="c3"></div></div></div></div>
+<div class="pane" data-g="b" data-t="i"><div class="panel ctl"><h3>¿Qué le pasa a tu dinero con la inflación?</h3><div id="ch"></div><div data-sl="inf|Inflación anual|0|10|.5"></div><div data-sl="yrs|Años|1|40|1"></div></div><div class="kpis" id="ik"></div><div class="panel" id="ic"></div><div class="panel"><h3>¿Quién supera a la inflación?</h3><p class="hint">Rentabilidad real aproximada con el punto medio del rango hipotético de cada producto, antes de impuestos.</p><div id="ib"></div></div></div>
+<div class="pane" data-g="b" data-t="f"><div class="warn"><span class="tag">SUPUESTO EDUCATIVO</span> Los tipos son una simplificación y la normativa tributaria española puede cambiar. Esto no es asesoramiento fiscal.</div><div class="panel ctl"><div data-sl="tax|Tipo impositivo supuesto|0|30|1"></div></div><div class="kpis" id="tk"></div><div class="panel" id="tc"></div><div class="panel ov" id="tp"></div></div></section>
+
+<section class="mod" id="m3"><h2>Construye</h2><div class="grid2"><div class="panel ctl"><p class="hint">Reparte el 100 %. Al mover un control, los demás se reajustan.</p><div id="sl6"></div><div id="pre"></div></div>
+<div><div class="panel"><div class="stk" id="al"></div><div class="lg" id="alg"></div></div><div class="kpis" id="mk"></div><div class="panel" id="cp"></div><div class="panel" id="sg"></div><p class="hint">No existe una cartera que maximice a la vez rentabilidad, seguridad y liquidez. Mayor rentabilidad potencial = mayor riesgo potencial. Volatilidad calculada con correlación media simplificada (0,4). <span class="tag">Supuestos educativos</span></p></div></div></section>
+
+<section class="mod" id="m4"><h2>Pon a prueba tu cartera</h2><div class="panel"><div id="sc"></div><div id="si"></div></div><div class="panel" id="sd"></div><div class="panel"><h3>Tu cartera ante todos los escenarios</h3><div id="sa"></div><p class="hint">Impactos simplificados e hipotéticos por tipo de activo: no son correlaciones reales ni predicciones.</p></div></section>
+
+<section class="mod" id="m5"><h2>Tu informe de inversor</h2><div class="panel" id="rt"></div><div class="panel" id="rp"></div><div class="panel" id="ls"></div><button class="chip" onclick="print()">Imprimir informe</button></section>
+
+<footer>Realizado por Ismael Miján · Finalidad exclusivamente educativa. Datos de rentabilidad, inflación, fiscalidad y riesgo: supuestos educativos modificables en el código (objetos A, PR, SH).</footer>
+</main></div>
+<script>
+/* ===== DATOS: SUPUESTOS EDUCATIVOS (modificables) ===== */
+// Clases de activo: r=rentabilidad esperada hipotética %, v=volatilidad %, l=año muy malo %, q=liquidez 0-10
+const A={liq:{n:'Liquidez',s:'Liquidez',r:2,v:.5,l:0,q:10,c:'#7C8DA0'},rf:{n:'Renta fija',s:'R. fija',r:3.5,v:5,l:-12,q:7,c:'#2E7DAF'},rv:{n:'Renta variable',s:'R. variable',r:7,v:16,l:-38,q:8,c:'#17803F'},inm:{n:'Inmobiliario',s:'Inmob.',r:5.5,v:12,l:-30,q:5,c:'#8E6BBF'},oro:{n:'Oro y materias primas',s:'Oro',r:3,v:15,l:-25,q:8,c:'#C9A227'},esp:{n:'Activos especulativos',s:'Espec.',r:10,v:50,l:-70,q:6,c:'#C5322B'}};
+const KS=Object.keys(A);
+// Escenarios de estrés: impacto % por clase (liq,rf,rv,inm,oro,esp)
+const SH={bur:['Crisis bursátil','Renta variable −35 %.',[0,1,-35,-20,5,-60]],inf:['Inflación alta (6 %)','Efecto sobre el valor real del dinero.',[-6,-8,-8,-3,6,-15]],tip:['Subida de tipos (+2 puntos)','Los bonos y los activos con deuda sufren.',[1,-8,-10,-12,-4,-15]],rcs:['Recesión','Caen beneficios y mercados.',[0,3,-25,-15,4,-40]],ene:['Crisis energética','Sube la inflación y se resienten los beneficios.',[-4,-5,-15,-8,8,-25]],fin:['Crisis financiera','Tensión en bancos y crédito.',[-1,-2,-45,-30,8,-70]],rcv:['Recuperación económica','Vuelven beneficios y confianza.',[0,4,25,15,0,40]]};
+const PF=[{n:'Conservador',d:'#17803F',v:[0,4],x:'Prioriza no perder y disponer del dinero. Encaja con productos estables, aunque con inflación puede perder poder adquisitivo.'},{n:'Moderado',d:'#E0B400',v:[3,8],x:'Acepta algunas oscilaciones a cambio de más rentabilidad potencial, manteniendo una base estable.'},{n:'Dinámico',d:'#E8760A',v:[7,13],x:'Tolera caídas notables y tiene plazo para intentar crecer más; los años malos serán incómodos.'},{n:'Agresivo',d:'#C5322B',v:[11,40],x:'Acepta grandes oscilaciones y pérdidas posibles buscando máximo crecimiento; exige plazo largo y control emocional.'}];
+// Productos: id n riesgo(1-7) rango% volatilidad liquidez(0-10) horizonte diversificación(1-5) pérdida garantía fiscalidad qué efectos ventajas riesgos error
+const K='id n rk r v lq hz dv ls gr tx w e a b m'.split(' ');
+const PR=[
+['cta','Cuenta remunerada',1,[1,3],'≈ 0 %',10,'Corto plazo',1,'≈ 0 %','Garantía de depósitos (hasta 100.000 €/titular y entidad)','Intereses: base del ahorro, cada año','Dinero disponible que paga un interés pequeño.','Inflación: pierde poder adquisitivo si paga menos | Tipos: si bajan, baja el interés | Recesión: estable','Disponible y sin oscilaciones','Interés bajo y variable','Dejar todos los ahorros aquí durante 20 años'],
+['dep','Depósito bancario',1,[2,3.5],'≈ 0 %',6,'1-3 años',1,'≈ 0 % (penaliza cancelar antes)','Garantía de depósitos (hasta 100.000 €)','Intereses: base del ahorro, cada año','Inmovilizas el dinero un plazo a un interés pactado.','Inflación: un tipo fijo puede quedarse corto | Tipos: no te beneficias si suben | Recesión: sin cambios','Rentabilidad conocida de antemano','Menos liquidez y penalizaciones','Ignorar la inflación'],
+['let','Letras del Tesoro',1,[2,3.5],'1 %',8,'3-12 meses',1,'Baja (solo si vendes antes)','Respaldo del Estado emisor','Rendimiento: base del ahorro, al vencimiento','Prestas al Estado: compras con descuento y cobras el nominal.','Inflación: puede quedarse corta | Tipos: las nuevas letras pagan más | Recesión: suelen actuar de refugio','Riesgo bajo, plazo corto','Rentabilidad moderada','Confundir «sin riesgo» con «sin inflación»'],
+['bon','Bonos',3,[2.5,5],'5 %',6,'Hasta su vencimiento',2,'Moderada: -10 % a -20 % si suben tipos o hay impago','Depende del emisor','Cupones: base del ahorro; plusvalía al vender','Prestas a un Estado o empresa y cobras cupones.','Inflación: el cupón fijo pierde valor real | Tipos: si suben, el precio baja | Recesión: depende del emisor','Ingresos previsibles','Precio sensible a tipos; impago','Creer que su precio no varía antes del vencimiento'],
+['mon','Fondo monetario',1,[1.5,3],'0,5 %',9,'Menos de 1 año',3,'≈ 0 % (no garantizado)','No garantizado','Ganancia al reembolsar (diferimiento)','Fondo que invierte en deuda a muy corto plazo.','Inflación: similar a una cuenta | Tipos: se ajusta rápido | Recesión: estable','Liquidez; no tributas hasta reembolsar','Rentabilidad modesta','Creer que está garantizado como un depósito'],
+['frf','Fondo de renta fija',3,[2.5,5],'5 %',8,'2-5 años',4,'Moderada: -5 % a -15 %','No garantizado','Ganancia al reembolsar (diferimiento)','Cartera diversificada de bonos.','Inflación: sufre si sube | Tipos: baja de precio si suben | Recesión: suele resistir','Diversifica emisores','Pierde si suben los tipos','Comprar sin mirar la duración'],
+['mix','Fondo mixto',4,[3,6],'8 %',8,'3-7 años',4,'Moderada-alta: -10 % a -25 %','No garantizado','Ganancia al reembolsar (diferimiento)','Combina renta fija y renta variable.','Inflación: la parte bursátil ayuda a largo plazo | Tipos: afectan a los bonos | Recesión: cae menos que la bolsa','Reparto automático','Comisiones; ambas partes pueden caer','Creer que «mixto» elimina las pérdidas'],
+['idx','Fondo indexado',5,[4,8],'15 %',8,'Más de 8 años',5,'Alta: -30 % a -50 % en crisis','No garantizado','Ganancia al reembolsar (diferimiento)','Replica un índice con muchas empresas y bajo coste.','Inflación: a largo plazo ha tendido a superarla (sin garantía) | Tipos: presión a corto | Recesión: caídas fuertes, a menudo temporales','Muy diversificado y barato','Oscilaciones fuertes','Vender en plena caída'],
+['etf','ETF de renta variable',5,[4,8],'16 %',9,'Más de 8 años',5,'Alta: -30 % a -50 % en crisis','No garantizado','Plusvalía al vender; dividendos según el ETF','Fondo cotizado que replica un índice y se compra como una acción.','Inflación: a largo plazo ha tendido a superarla (sin garantía) | Tipos: presión a corto | Recesión: caídas fuertes','Barato y fácil de vender','Oscilaciones; operar con prisa','Comprar y vender continuamente'],
+['acc','Acciones individuales',6,[3,10],'28 %',9,'Más de 10 años',2,'Muy alta: hasta -100 % en una empresa','Ninguna','Dividendos cada año; plusvalía al vender','Compras una parte de una empresa.','Inflación: depende del negocio | Tipos: presionan las valoraciones | Recesión: caen los beneficios','Potencial alto y dividendos','Una empresa puede quebrar','Poner todo en una sola empresa'],
+['soc','SOCIMI / REIT',5,[3,8],'18 %',7,'Más de 8 años',3,'Alta: -30 % a -45 %','Ninguna','Dividendos cada año; plusvalía al vender','Empresa cotizada que posee inmuebles y reparte alquileres.','Inflación: los alquileres pueden actualizarse | Tipos: si suben, suele bajar su precio | Recesión: cae la ocupación','Exposición inmobiliaria sin comprar pisos','Sensible a tipos y a la bolsa','Creer que el inmobiliario nunca baja'],
+['cro','Crowdlending inmobiliario',6,[5,10],'Difícil de medir',2,'1-3 años, a vencimiento',1,'Alta: puede perderse el préstamo','Ninguna','Intereses: base del ahorro','Prestas a promotores mediante plataformas.','Inflación: interés fijo | Tipos: encarecen la financiación | Recesión: más impagos','Interés elevado','Impagos, retrasos y poca liquidez','Poner mucho dinero en un solo proyecto'],
+['oro','Oro',4,[0,5],'15 %',8,'Más de 10 años',1,'Alta: -30 % en algunos ciclos','Ninguna','Plusvalía al vender','Metal refugio; no paga intereses.','Inflación: a veces ha actuado de cobertura | Tipos: si suben, compite con activos que pagan | Recesión: a veces refugio','Diversifica la cartera','No genera ingresos; es volátil','Creer que siempre sube en las crisis'],
+['cri','Criptoactivos',7,[-10,25],'70 %',7,'Muy incierto',1,'Muy alta: -70 % a -90 %','Ninguna','Ganancia al vender o permutar','Activos digitales sin respaldo; su precio depende de la demanda.','Inflación: sin relación demostrada | Tipos: muy sensibles | Recesión: caídas fuertes','Potencial alto','Puedes perderlo todo; estafas','Invertir por moda (miedo a perderse la subida)']];
+const PD={},P=PR.map(r=>{const o={};K.forEach((k,i)=>o[k]=r[i]);return PD[o.id]=o});
+// Cuestionario: [pregunta, tipo t=tolerancia/c=capacidad, [opción, puntos, (años)]]
+const QS=[
+['Tienes 5.000 € ahorrados y tu inversión cae un 20 % (te quedan 4.000 €). ¿Qué haces?','t',[['Vendo todo para no perder más',0],['Vendo una parte',1],['Mantengo y espero',2],['Aporto más porque ahora está más barata',3]]],
+['¿Qué importancia tiene poder disponer del dinero rápidamente?','c',[['Imprescindible: puedo necesitarlo en cualquier momento',0],['Bastante importante',1],['Poco importante',2],['No lo necesito en mucho tiempo',3]]],
+['¿Cuándo necesitarías recuperar este dinero?','c',[['En menos de 2 años',0,1],['En 2-5 años',1,4],['En 5-10 años',2,8],['En 10-20 años',3,15],['En más de 20 años',3,25]]],
+['¿Qué prefieres?','t',[['Rentabilidad baja pero estable',0],['Algo de oscilación para ganar un poco más',1],['Bastante oscilación para ganar más',2],['Grandes oscilaciones para intentar la máxima rentabilidad',3]]],
+['¿Qué parte de tus ahorros podrías ver reducida temporalmente sin pasarlo mal?','t',[['Ninguna',0],['Hasta un 10 %',1],['Hasta un 25 %',2],['Un 40 % o más',3]]],
+['¿Cuál es tu objetivo principal?','c',[['Tener un colchón de seguridad',0],['Comprar algo en pocos años (estudios, coche)',1],['Hacer crecer el dinero sin meta concreta',2],['Independencia económica a largo plazo',3]]],
+['¿Qué experiencia tienes con productos financieros?','t',[['Ninguna',0],['Cuenta o depósito',1],['He invertido alguna vez',2],['Invierto con regularidad',3]]]];
+const DN={A:'Vendo todo',B:'Mantengo',C:'Aporto más',D:'Reduzco el riesgo'};
+
+/* ===== ESTADO (se conserva al cambiar de módulo) ===== */
+const S={a:[],obj:'',cap:5000,pmt:100,yrs:10,ret:5,inf:2,tax:19,tm:'end',tx:'end',sc:'cen',seq:'8,12,-18,6,-7,15,10,-4,12,9',w:{liq:20,rf:30,rv:40,inm:0,oro:5,esp:5},sel:'etf',cmp:['dep','mix','etf'],amt:1000,sh:'bur',dec:null,rs:'fast',q:0,t:{},d:{},m:0};
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const nf=(v,d)=>v.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const E=v=>nf(v,2)+' €',E0=v=>nf(v,0)+' €',pc=(v,d=1)=>nf(v,d)+' %',ax=v=>Math.abs(v)>=1000?nf(v/1000,0)+' k':nf(v,0);
+const kp=(l,v,s='',c='inherit')=>`<div class="kp"><small>${l}</small><b style="color:${c}">${v}</b><em>${s}</em></div>`;
+const SCN={pes:'Pesimista',cen:'Central',opt:'Optimista',var:'Años variables'},SC={pes:'var(--neg)',cen:'var(--ac)',opt:'var(--pos)'};
+
+/* ===== GRÁFICOS SVG ===== */
+function line(ss,xl='años'){const W=620,H=250,L=52,R=12,T=10,B=30,all=ss.flatMap(s=>s.d);let mx=Math.max(...all),mn=Math.min(0,...all);if(mx===mn)mx=mn+1;const n=ss[0].d.length-1,x=i=>L+i/n*(W-L-R),y=v=>T+(1-(v-mn)/(mx-mn))*(H-T-B);let g='';
+for(let k=0;k<=4;k++){const v=mn+(mx-mn)*k/4;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--ln)"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end">${ax(v)}</text>`}
+for(let i=0;i<=n;i+=Math.ceil(n/10))g+=`<text x="${x(i)}" y="${H-12}" text-anchor="middle">${i}</text>`;g+=`<text x="${W/2}" y="${H-1}" text-anchor="middle">${xl}</text>`;
+ss.forEach(s=>g+=`<path d="${s.d.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('')}" fill="none" stroke="${s.c}" stroke-width="${s.w||2.2}" ${s.k?'stroke-dasharray="6 4"':''}/>`);
+return`<svg viewBox="0 0 ${W} ${H}" class="ch" role="img">${g}</svg><div class="lg">${ss.map(s=>`<span><i style="background:${s.c}"></i>${s.n}</span>`).join('')}</div>`}
+function hbar(it,f=v=>pc(v)){const m=Math.max(...it.map(i=>Math.abs(i.v)),1);return it.map(i=>`<div class="hb"><span>${i.n}</span><div class="tr"><i style="${i.v<0?'right':'left'}:50%;width:${Math.abs(i.v)/m*50}%;background:${i.c||(i.v<0?'var(--neg)':'var(--pos)')}"></i></div><b>${f(i.v)}</b></div>`).join('')}
+function stk(a){const t=a.reduce((s,x)=>s+Math.max(0,x.v),0)||1;return`<div class="stk">${a.map(x=>`<i style="width:${Math.max(0,x.v)/t*100}%;background:${x.c}">${x.v/t>.14?E0(x.v):''}</i>`).join('')}</div><div class="lg">${a.map(x=>`<span><i style="background:${x.c}"></i>${x.n}: ${E0(x.v)}</span>`).join('')}</div>`}
+function scat(pts,x0,x1,y0,y1,xl,yl){const W=620,H=260,L=46,R=14,T=10,B=36,X=v=>L+(v-x0)/(x1-x0)*(W-L-R),Y=v=>T+(1-(v-y0)/(y1-y0))*(H-T-B);let g='';
+for(let k=0;k<=4;k++){const v=y0+(y1-y0)*k/4,u=x0+(x1-x0)*k/4;g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--ln)"/><text x="${L-5}" y="${Y(v)+4}" text-anchor="end">${nf(v,0)}</text><text x="${X(u)}" y="${H-18}" text-anchor="middle">${nf(u,0)}</text>`}
+g+=`<text x="${(W+L)/2}" y="${H-3}" text-anchor="middle">${xl}</text><text x="10" y="${H/2}" transform="rotate(-90 10 ${H/2})" text-anchor="middle">${yl}</text>`;
+pts.forEach(p=>{if(p.a!=null)g+=`<line x1="${X(p.x)}" x2="${X(p.x)}" y1="${Y(p.a)}" y2="${Y(p.b)}" stroke="${p.c}" stroke-width="4" opacity=".35"/>`;g+=`<circle cx="${X(p.x)}" cy="${Y(p.y)}" r="${p.r||6}" fill="${p.c}"/><text class="pl" x="${X(p.x)+9}" y="${Y(p.y)-6}">${p.l}</text>`});return`<svg viewBox="0 0 ${W} ${H}" class="ch" role="img">${g}</svg>`}
+
+/* ===== MOTOR FINANCIERO ===== */
+// Rentabilidades anuales por escenario (el escenario "var" usa la secuencia escrita por el alumno)
+function rt(sc){const n=S.yrs;if(sc==='var'){const a=S.seq.split(/[;,\s]+/).filter(x=>x!=='').map(Number).filter(isFinite),s=a.length?a:[0];return Array.from({length:n},(_,i)=>Math.max(-95,s[i%s.length])/100)}return Array(n).fill((S.ret+{pes:-3,cen:0,opt:3}[sc])/100)}
+// Capitalización mensual compuesta: tasa mensual equivalente (1+r)^(1/12)-1; aportaciones al inicio o final de mes
+function run(rr,yearlyTax){let b=S.cap,c=S.cap;const p=[b],k=[c];for(let y=0;y<S.yrs;y++){const m=(1+rr[y])**(1/12)-1,s=b;for(let i=0;i<12;i++){if(S.tm==='beg')b+=S.pmt;b*=1+m;if(S.tm==='end')b+=S.pmt;c+=S.pmt}
+if(yearlyTax){const g=b-s-S.pmt*12;if(g>0)b-=g*S.tax/100}p.push(b);k.push(c)}return{p,k}}
+function calc(sc){const rr=rt(sc),g=run(rr,false),y=S.tx==='yearly'?run(rr,true):null,gf=g.p[S.yrs],cn=g.k[S.yrs],net=y?y.p[S.yrs]:gf-Math.max(0,gf-cn)*S.tax/100,d=(1+S.inf/100)**S.yrs;return{rr,g,y,gf,cn,net,real:gf/d,rn:net/d}}
+const netPath=(g,t)=>g.p.map((v,i)=>v-Math.max(0,v-g.k[i])*t/100);
+function pf(w=S.w){let r=0,v1=0,v2=0,l=0,h=0,q=0;KS.forEach(k=>{const x=w[k]/100;r+=x*A[k].r;v1+=(x*A[k].v)**2;v2+=x*A[k].v;l+=x*A[k].l;h+=x*x;q+=x*A[k].q});const vol=Math.sqrt(.6*v1+.4*v2*v2);return{r,vol,l,dv:(1-h)/(1-1/6)*100,q:q*10,rk:Math.min(7,1+vol/4.5)}}
+const imp=id=>KS.reduce((a,k,i)=>a+S.w[k]/100*SH[id][2][i],0);
+function setW(k,v){v=Math.max(0,Math.min(100,Math.round(v)));const o=KS.filter(i=>i!==k),rest=100-v,s=o.reduce((a,i)=>a+S.w[i],0),n={};o.forEach(i=>n[i]=s?S.w[i]/s*rest:rest/o.length);let t=0;o.forEach(i=>{n[i]=Math.floor(n[i]);t+=n[i]});o.sort((a,b)=>n[b]-n[a]);for(let d=rest-t,j=0;d>0;d--,j=(j+1)%o.length)n[o[j]]++;S.w=Object.assign(n,{[k]:v})}
+function prof(){if(QS.some((q,i)=>S.a[i]==null))return null;const m=ty=>{const r=QS.map((q,i)=>q[1]===ty?q[2][S.a[i]][1]:null).filter(v=>v!=null);return r.reduce((a,b)=>a+b)/r.length},t=m('t'),c=m('c'),e=Math.min((t+c)/2,c+.5);return{t,c,i:e<.75?0:e<1.5?1:e<2.2?2:3}}
+function compat(){const p=prof(),f=pf();if(!p)return{l:'Sin perfil',c:'var(--mut)',ok:false,t:'Completa «Conócete» para ver la compatibilidad con tu perfil.'};const Q=PF[p.i],[lo,hi]=Q.v;let l,c,t,ok=false;
+if(f.vol>hi+.5){l='Más riesgo del que indica tu perfil';c='var(--neg)';t=`Volatilidad estimada ${pc(f.vol)}, por encima del rango habitual de un perfil ${Q.n.toLowerCase()} (${lo}-${hi} %). Podrías sufrir pérdidas mayores de las que dijiste tolerar.`}
+else if(f.vol<lo-.5){l='Menos riesgo del que tu perfil admitiría';c='var(--wn)';t=`Volatilidad estimada ${pc(f.vol)}, por debajo del rango de un perfil ${Q.n.toLowerCase()} (${lo}-${hi} %). Es prudente, pero quizá renuncies a rentabilidad potencial.`}
+else{l='Compatible con tu perfil';c='var(--pos)';ok=true;t=`Volatilidad estimada ${pc(f.vol)}, dentro del rango de un perfil ${Q.n.toLowerCase()} (${lo}-${hi} %). Parece compatible con tu perfil, pero no garantiza ningún resultado.`}
+if(p.c<1&&S.w.rv+S.w.esp>30)t+=' Tu capacidad de riesgo es baja (plazo y liquidez): las partes volátiles podrían obligarte a vender en mal momento.';
+if(S.yrs<5&&S.w.rv+S.w.esp>40)t+=' Con un horizonte menor de 5 años, una parte volátil tan grande es delicada.';return{l,c,t,ok}}
+
+/* ===== RENDER ===== */
+function rq(){const p=prof();let h=`<div class="dots">${QS.map((q,i)=>`<button class="${i===S.q?'on':''}${S.a[i]!=null?' ok':''}" data-q="${i}">${i+1}</button>`).join('')}<button class="${S.q>=7?'on':''}" data-q="7">Perfil</button></div>`;
+if(S.q<7){const q=QS[S.q];h+=`<h3>${q[0]}</h3>${q[2].map((o,j)=>`<button class="opt chip${S.a[S.q]===j?' on':''}" data-a="${j}" style="margin-bottom:8px">${o[0]}</button>`).join('')}`}
+else if(!p)h+='<p>Responde las siete preguntas para ver tu perfil.</p>';
+else{const Q=PF[p.i];h+=`<h3><span class="dot" style="background:${Q.d}"></span>${Q.n}</h3><p>${Q.x}</p><small>Tolerancia al riesgo: cómo te sientes ante pérdidas y volatilidad</small><div class="mt"><i style="width:${p.t/3*100}%;background:var(--ac)"></i></div><small>Capacidad para asumir riesgo: cuánto puedes asumir según plazo, liquidez y objetivo</small><div class="mt"><i style="width:${p.c/3*100}%;background:var(--pos)"></i></div>
+<p class="hint">No son lo mismo: puedes sentirte cómodo con las caídas (tolerancia alta) y aun así necesitar el dinero pronto (capacidad baja). ${p.t-p.c>.5?'En tu caso, tu tolerancia supera a tu capacidad: manda la capacidad.':p.c-p.t>.5?'En tu caso, podrías asumir más riesgo del que te resulta cómodo.':'En tu caso, ambas están bastante alineadas.'}</p>
+<p>Según tus respuestas, este nivel de riesgo parece compatible con tus objetivos y horizonte, pero ningún perfil garantiza una rentabilidad determinada.</p><button class="chip on" data-m="1">Siguiente: descubre los productos</button>`}
+$('#qz').innerHTML=h}
+const mt=(l,v,m,c)=>`<small>${l}: ${v}/${m}</small><div class="mt"><i style="width:${v/m*100}%;background:${c}"></i></div>`;
+function rp(){const p=PD[S.sel];$('#pl').innerHTML=P.map(x=>`<button class="chip${x.id===S.sel?' on':''}" data-p="${x.id}">${x.n}</button>`).join('');
+const ef=p.e.split(' | ');$('#pd').innerHTML=`<h3>${p.n}</h3><p>${p.w}</p><div class="grid2" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))"><div>${mt('Riesgo',p.rk,7,'var(--neg)')}${mt('Liquidez',p.lq,10,'var(--ac)')}${mt('Diversificación',p.dv,5,'var(--ac)')}<p class="hint">Rentabilidad esperada: <b>${p.r[0]} % a ${p.r[1]} % anual</b> (hipotética, no histórica ni predicción). Volatilidad: ${p.v}. Horizonte razonable: ${p.hz}.</p></div>
+<div><p><b>Pérdida potencial:</b> ${p.ls}<br><b>Protección:</b> ${p.gr}<br><b>Fiscalidad (simplificada):</b> ${p.tx}</p><p class="hint">${ef.join('<br>')}</p></div></div>
+<p><b class="ok">Ventajas:</b> ${p.a}. <b class="bad">Riesgos:</b> ${p.b}.</p><p class="hint"><b>Error típico de principiante:</b> ${p.m}.</p>`;
+$('#pg').innerHTML='<h3>Riesgo frente a rentabilidad hipotética</h3>'+scat(P.map(x=>({x:x.rk,y:(x.r[0]+x.r[1])/2,a:x.r[0],b:x.r[1],l:x.id,c:x.id===S.sel?'var(--ac)':'var(--mut)',r:x.id===S.sel?8:5})),.5,7.5,-10,30,'Riesgo (1-7)','Rentabilidad hipotética (%)')+'<p class="hint">La barra vertical es el rango; el punto, su centro. A más rentabilidad potencial, más riesgo potencial.</p>'}
+function rc(){$('#cl').innerHTML=P.map(x=>`<button class="chip${S.cmp.includes(x.id)?' on':''}" data-c="${x.id}">${x.n}</button>`).join('');const L=S.cmp.map(i=>PD[i]);
+$('#ct').innerHTML=`<table><tr><th>Producto</th><th>Riesgo</th><th>Rentab. esperada</th><th>Volatilidad</th><th>Liquidez</th><th>Horizonte</th><th>Inflación</th><th>Fiscalidad</th><th>Diversif.</th><th>Pérdida potencial</th><th>Garantía</th></tr>${L.map(p=>`<tr><td><b>${p.n}</b></td><td>${p.rk}/7</td><td>${p.r[0]} a ${p.r[1]} %</td><td>${p.v}</td><td>${p.lq}/10</td><td>${p.hz}</td><td>${p.e.split(' | ')[0].replace('Inflación: ','')}</td><td>${p.tx}</td><td>${p.dv}/5</td><td>${p.ls}</td><td>${p.gr}</td></tr>`).join('')}</table>`;
+$('#co').innerHTML=`<h3>${E0(S.amt)} durante ${S.yrs} años (hipótesis baja y alta)</h3>`+hbar(L.flatMap(p=>[{n:p.n+' · baja',v:S.amt*(1+p.r[0]/100)**S.yrs,c:'var(--mut)'},{n:p.n+' · alta',v:S.amt*(1+p.r[1]/100)**S.yrs,c:'var(--ac)'}]).map(x=>({...x,v:x.v-S.amt})),v=>(v>=0?'+':'')+E0(v))+'<p class="hint">Ganancia o pérdida sobre lo invertido con los extremos del rango hipotético, sin impuestos ni inflación. Un producto puede ir peor que su rango: no es una predicción.</p>'}
+function r3(){const c=calc(S.sc),rr=(1+S.ret/100)/(1+S.inf/100)-1,gm=(c.rr.reduce((a,x)=>a*(1+x),1))**(1/S.yrs)-1;
+$('#kp').innerHTML=kp('Capital aportado',E(c.cn))+kp('Beneficio generado',E(c.gf-c.cn),'bruto',c.gf>=c.cn?'var(--pos)':'var(--neg)')+kp('Capital final nominal',E(c.gf),'euros futuros')+kp('Capital final real',E(c.real),'poder adquisitivo de hoy')+kp('Impuestos estimados',E(c.gf-c.net),`supuesto ${pc(S.tax,0)}`,'var(--wn)')+kp('Final después de impuestos',E(c.net),`real: ${E0(c.rn)}`);
+const ss=[{n:'Aportado',d:c.g.k,c:'var(--mut)',k:1}];['pes','cen','opt'].forEach(s=>ss.push({n:SCN[s],d:calc(s).g.p,c:SC[s]}));if(S.sc==='var')ss.push({n:'Años variables',d:c.g.p,c:'var(--ink)',w:3});ss.push({n:`Poder adquisitivo de hoy (${SCN[S.sc]})`,d:c.g.p.map((v,i)=>v/(1+S.inf/100)**i),c:'var(--wn)',k:1});
+$('#c1').innerHTML='<h3>Evolución del capital (bruto, euros nominales)</h3>'+line(ss)+`<p class="hint">${S.sc==='var'?`Años variables: media geométrica ${pc(gm*100,2)} al año. Los años malos importan más que el promedio, y el orden también.`:'Una línea constante no existe en la realidad: pruébalo con «años variables».'} Aportaciones ${S.tm==='beg'?'al principio':'al final'} de cada mes.</p>`;
+$('#c2').innerHTML='<h3>Qué parte es tuya, qué parte es beneficio y qué se lleva Hacienda</h3>'+stk([{n:'Aportado',v:c.cn,c:'#7C8DA0'},{n:'Beneficio neto',v:c.net-c.cn,c:'#17803F'},{n:'Impuestos',v:c.gf-c.net,c:'#B56A00'}])+`<h3 style="margin-top:16px">Y en poder adquisitivo de hoy</h3>`+stk([{n:'Lo que compras hoy con tu final neto',v:c.rn,c:'#0D5C73'},{n:'Perdido por inflación',v:c.net-c.rn,c:'#C5322B'}])+'<p class="hint">Los impuestos se aplican según el supuesto elegido; la inflación se descuenta con (1+i)^años.</p>';
+$('#c3').innerHTML='<h3>Rentabilidad nominal frente a real</h3>'+hbar(['pes','cen','opt'].flatMap(s=>{const n=S.ret+{pes:-3,cen:0,opt:3}[s];return[{n:SCN[s]+' · nominal',v:n,c:'var(--ac)'},{n:SCN[s]+' · real',v:((1+n/100)/(1+S.inf/100)-1)*100}]}),v=>pc(v,2))+`<p class="hint">Rentabilidad real ≈ nominal − inflación. Con precisión: (1 + nominal) / (1 + inflación) − 1 = <b>${pc(rr*100,2)}</b> en el escenario central.</p>`}
+function ri(){const N=Math.max(S.yrs,5),pa=(i,y)=>10000/(1+i/100)**y,d=1-1/(1+S.inf/100)**S.yrs;
+$('#ch').innerHTML=[1,2,3,5,8].map(i=>`<button class="chip" data-i="${i}">${i} %</button>`).join('');
+$('#ik').innerHTML=kp('10.000 € dentro de '+S.yrs+' años',E0(10000),'mismo número, otro valor')+kp('Compran lo que hoy compran',E0(pa(S.inf,S.yrs)),`pierdes un ${pc(d*100)} de poder adquisitivo`,'var(--neg)')+kp('Rentabilidad mínima para empatar',pc(S.inf),'nominal, antes de impuestos')+kp('Con impuestos (supuesto)',pc(S.inf/(1-S.tax/100)),'nominal bruta necesaria','var(--wn)');
+$('#ic').innerHTML=`<h3>Valor de 10.000 € de hoy en poder adquisitivo</h3>`+line([1,2,3,5,8].map((i,j)=>({n:i+' %',d:Array.from({length:N+1},(_,y)=>pa(i,y)),c:['#17803F','#2E7DAF','#B56A00','#E8760A','#C5322B'][j],w:i===S.inf?3.5:1.8})));
+$('#ib').innerHTML=hbar(P.map(p=>({n:p.n,v:((1+(p.r[0]+p.r[1])/200)/(1+S.inf/100)-1)*100})),v=>pc(v))}
+function rf(){const rr=rt(S.sc),g=run(rr,false),y=run(rr,true),e=netPath(g,S.tax),N=S.yrs;
+$('#tk').innerHTML=kp('Final bruto',E0(g.p[N]))+kp('Neto: tributas cada año',E0(y.p[N]),'depósitos, bonos','var(--wn)')+kp('Neto: tributas al final',E0(e[N]),'diferimiento (fondos, ETF, acciones)','var(--pos)')+kp('Diferencia por diferir',E0(e[N]-y.p[N]),'el impuesto no resta mientras tanto');
+$('#tc').innerHTML='<h3>Mismo bruto, distinta fiscalidad</h3>'+line([{n:'Bruto',d:g.p,c:'var(--mut)',k:1},{n:'Tributa cada año',d:y.p,c:'var(--wn)'},{n:'Tributa al final',d:e,c:'var(--pos)'}])+'<p class="hint">Escenario seleccionado en el simulador. Diferir el impuesto deja más dinero trabajando.</p>';
+const T=[['Depósitos','Cobro de intereses','Intereses como rendimiento del ahorro','No'],['Letras y bonos','Cupón, vencimiento o venta','Cupones y diferencia de precio','No (cupón)'],['Fondos de inversión','Reembolso de participaciones','Solo la ganancia, al reembolsar','Sí: los traspasos entre fondos no tributan'],['ETF','Venta de participaciones','Plusvalía al vender','Sí, hasta vender'],['Acciones','Cobro de dividendos; venta','Plusvalía al vender','Plusvalía sí; dividendo no'],['Dividendos','Cobro','Dividendo íntegro cada año','No'],['Criptoactivos','Venta o permuta','Ganancia al vender o cambiar','Hasta vender o permutar']];
+$('#tp').innerHTML='<table><tr><th>Producto</th><th>Hecho imponible</th><th>Qué tributa</th><th>¿Se difiere?</th></tr>'+T.map(r=>'<tr>'+r.map((x,i)=>`<td>${i?x:'<b>'+x+'</b>'}</td>`).join('')+'</tr>').join('')+'</table><p class="hint">Rentabilidad bruta = antes de impuestos; neta = después. Tipos simplificados con carácter educativo.</p>'}
+function r4(){const f=pf(),c=compat();$('#al').innerHTML=KS.map(k=>S.w[k]?`<i style="width:${S.w[k]}%;background:${A[k].c}">${S.w[k]>=9?S.w[k]+' %':''}</i>`:'').join('');$('#alg').innerHTML=KS.map(k=>`<span><i style="background:${A[k].c}"></i>${A[k].n} ${S.w[k]} %</span>`).join('');
+$('#mk').innerHTML=kp('Riesgo estimado',nf(f.rk,1)+' / 7','',f.rk>4.5?'var(--neg)':f.rk>2.5?'var(--wn)':'var(--pos)')+kp('Rentabilidad esperada',pc(f.r),'hipotética, anual')+kp('Volatilidad estimada',pc(f.vol))+kp('Diversificación',nf(f.dv,0)+' / 100')+kp('Liquidez',nf(f.q,0)+' / 100')+kp('Pérdida potencial',pc(f.l,0),'en un año muy malo','var(--neg)');
+$('#cp').innerHTML=`<small>Compatibilidad con tu perfil</small><h3 style="color:${c.c}">${c.l}</h3><p>${c.t}</p><p class="hint">Esta cartera presenta estas características y parece más o menos compatible con el perfil y el objetivo introducidos; no es «la mejor cartera».</p>`;
+$('#sg').innerHTML='<h3>Riesgo frente a rentabilidad</h3>'+scat(KS.map(k=>({x:A[k].v,y:A[k].r,l:A[k].s,c:A[k].c})).concat([{x:f.vol,y:f.r,l:'Tu cartera',c:'var(--ink)',r:9}]),0,55,0,12,'Volatilidad (%)','Rentabilidad hipotética (%)')}
+function r5(){const id=S.sh,sh=SH[id],f=imp(id)/100,B=S.cap||10000;$('#sc').innerHTML=Object.keys(SH).map(k=>`<button class="chip${k===id?' on':''}" data-s="${k}">${SH[k][0]}</button>`).join('');
+$('#si').innerHTML=`<p class="hint">${sh[1]} <span class="tag">Supuesto educativo</span></p><div class="kpis">${kp('Efecto en tu cartera',pc(f*100),'',f<0?'var(--neg)':'var(--pos)')}${kp('Valor de '+E0(B),E0(B*(1+f)))}</div>`+hbar(KS.map((k,i)=>({n:`${A[k].n} (${sh[2][i]>0?'+':''}${sh[2][i]} %)`,v:S.w[k]/100*sh[2][i]})),v=>pc(v)+'')+'<p class="hint">Aportación de cada componente al resultado (puntos de cartera).</p>';
+if(f>-.03){$('#sd').innerHTML='<h3>Decisiones durante una crisis</h3><p>Elige un escenario con caída importante para tomar una decisión.</p>'}
+else{const T=5,mu=pf().r/100,V=1+f,end=S.rs==='fast'?(1+mu)**T:S.rs==='slow'?1:V*1.02**T,rh=(end/V)**(1/T)-1,ps=(s,x)=>Array.from({length:T+1},(_,t)=>B*x*(1+s)**t),D={A:ps(.02,V),B:ps(rh,V),C:ps(rh,V+.2),D:ps(.5*rh+.01,V)};
+let h=`<h3>Tu cartera ha caído un ${nf(-f*100,0)} %. ¿Qué haces?</h3>${Object.keys(DN).map(k=>`<button class="chip${S.dec===k?' on':''}" data-d="${k}">${k}. ${DN[k]}${k==='C'?' (+20 % del capital)':''}</button>`).join('')}`;
+if(S.dec){const col={A:'var(--neg)',B:'var(--ac)',C:'var(--pos)',D:'var(--wn)'};h+=`<p class="hint" style="margin-top:12px">Recuperación supuesta:</p>${[['fast','Rápida'],['slow','Lenta'],['none','No se recupera']].map(r=>`<button class="chip${S.rs===r[0]?' on':''}" data-r="${r[0]}">${r[1]}</button>`).join('')}`+line(Object.keys(D).map(k=>({n:`${k}. ${DN[k]}${k===S.dec?' (tu decisión)':''}`,d:D[k],c:col[k],w:k===S.dec?3.5:1.8})))+`<div class="ov"><table><tr><th>Decisión</th><th>Valor a 5 años</th><th>Aportado en total</th></tr>${Object.keys(D).map(k=>`<tr><td>${k===S.dec?'<b>'+DN[k]+'</b>':DN[k]}</td><td>${E0(D[k][T])}</td><td>${E0(B*(k==='C'?1.2:1))}</td></tr>`).join('')}</table></div><p class="hint">Ninguna decisión es correcta en todos los casos: cambia la velocidad de recuperación y cambia el ranking. Vender fija la pérdida; mantener exige aguantar; aportar más amplifica tanto la ganancia como el riesgo; reducir el riesgo limita ambas. Una caída temporal no es pérdida permanente hasta que vendes, pero un activo concreto puede no recuperarse.</p>`}
+$('#sd').innerHTML=h}
+$('#sa').innerHTML=hbar(Object.keys(SH).map(k=>({n:SH[k][0],v:imp(k)})),v=>pc(v))}
+const RT=[['Supera una inflación del 3 % con riesgo contenido','Construye una cartera con rentabilidad esperada superior al 3 % y volatilidad ≤ 8 %.',()=>S.t.b&&pf().r>3&&pf().vol<=8],['Cartera a 20 años','Pon un horizonte ≥ 20 años y una cartera compatible con tu perfil.',()=>S.t.b&&S.yrs>=20&&compat().ok],['Aguanta la crisis financiera','Cartera que pierda menos de un 15 % en «Crisis financiera» y espere ≥ 3 % anual.',()=>S.t.b&&imp('fin')>-15&&pf().r>=3],['30.000 € con 150 €/mes','Aporta 150 €/mes y alcanza ≥ 30.000 € netos en el escenario elegido.',()=>S.pmt===150&&calc(S.sc).net>=30000],['Nominal frente a real','Responde la pregunta de abajo.',()=>!!S.d.r5]];
+function lvl(){const n=RT.filter(r=>r[2]()).length;return{n,t:['Aprendiz','Aprendiz','Analista','Gestor','Gestor','Estratega'][n]}}
+function les(){const p=prof(),f=pf(),c=calc(S.sc),rr=(1+S.ret/100)/(1+S.inf/100)-1,w=Object.keys(SH).map(k=>[SH[k][0],imp(k)]).reduce((a,b)=>b[1]<a[1]?b:a),L=[];
+L.push(p?(p.t-p.c>.5?'Tu tolerancia al riesgo supera a tu capacidad: sentirse cómodo con las pérdidas no basta si el plazo o la liquidez necesaria son limitados.':p.c-p.t>.5?'Tu capacidad para asumir riesgo supera a tu tolerancia: podrías aguantar más oscilaciones de las que te resultan cómodas, y la incomodidad también cuenta.':'Tu tolerancia y tu capacidad de riesgo están alineadas: buena base, pero no garantiza ninguna rentabilidad.'):'Completa el cuestionario para distinguir tolerancia y capacidad de riesgo.');
+L.push(`Con rentabilidad nominal del ${pc(S.ret)} e inflación del ${pc(S.inf)}, tu rentabilidad real es ${pc(rr*100,2)}: ${rr<0?'pierdes poder adquisitivo aunque el saldo suba.':'ganas poder adquisitivo, pero menos de lo que sugiere el número nominal.'}`);
+L.push(`Tu cartera espera un ${pc(f.r)} anual con volatilidad del ${pc(f.vol)} y pérdida posible de ${pc(f.l,0)} en un año muy malo: más rentabilidad potencial va ligada a más riesgo potencial.`);
+L.push(`Los impuestos (supuesto del ${pc(S.tax,0)}) reducen tu resultado final en ${E0(c.gf-c.net)}: importa la rentabilidad neta, no solo la bruta.`);
+L.push(`En tu peor escenario simulado («${w[0]}») la cartera cambia ${pc(w[1])}: una caída temporal no es una pérdida permanente hasta que vendes, pero exige plazo y carácter para soportarla.`);
+L.push(S.dec?`En la crisis simulada elegiste «${DN[S.dec]}». Comparar las cuatro decisiones muestra que el resultado depende de la rapidez de la recuperación, y que decidir con pánico no es lo mismo que decidir con un plan.`:'Aún no has tomado decisiones en una crisis: pruébalo en el módulo 5 para ver cómo cambian los resultados según actúes.');
+L.push(`Tu horizonte es de ${S.yrs} años: cuanto más largo, más margen para absorber caídas; con plazos cortos, la volatilidad pesa mucho más.`);
+L.push(S.sc==='var'?'Con «años variables» has visto que las rentabilidades no llegan de forma constante: el orden de los años importa, sobre todo si aportas o retiras dinero.':'Prueba «años variables»: el promedio no cuenta toda la historia, y la rentabilidad pasada no garantiza la futura.');return L}
+function r6(){const p=prof(),f=pf(),c=calc(S.sc),L=lvl(),w=Object.keys(SH).map(k=>[SH[k][0],imp(k)]).reduce((a,b)=>b[1]<a[1]?b:a),rr=(1+S.ret/100)/(1+S.inf/100)-1,cm=compat();
+$('#rt').innerHTML=`<h3>Retos · nivel ${L.t} (${L.n}/5)</h3>`+RT.map((r,i)=>{const ok=r[2]();return`<p><b class="${ok?'ok':''}">${ok?'✓':'○'} Reto ${i+1}. ${r[0]}</b><br><span class="hint">${r[1]}</span></p>`}).join('')+`<p class="hint">¿Por qué una rentabilidad nominal del 3 % puede implicar una real negativa?</p>`+['Porque si los precios suben más del 3 %, con tu dinero compras menos que antes','Porque el 3 % siempre es una pérdida','Porque los impuestos se pagan antes de invertir'].map((t,i)=>`<button class="opt chip${S.d.r5&&i===0?' on':''}" data-r5="${i}" style="margin-bottom:6px">${t}</button>`).join('')+(S.d.r5===0?'<p class="ok">Correcto: la rentabilidad real compara la nominal con la inflación.</p>':S.d.r5===1?'<p class="bad">Aún no: piensa en qué ocurre con los precios.</p>':'');
+const R=[['Tu perfil',p?PF[p.i].n:'Sin completar'],['Tu horizonte',S.yrs+' años'],['Tu objetivo',S.obj||'Sin indicar'],['Capital inicial',E0(S.cap)],['Aportación mensual',E0(S.pmt)],['Cartera simulada',KS.map(k=>`${A[k].n} ${S.w[k]} %`).join(' · ')],['Rentabilidad estimada',`${pc(S.ret)} (simulador) · ${pc(f.r)} (cartera) · hipotética`],['Rentabilidad real',pc(rr*100,2)+' con inflación '+pc(S.inf)],['Riesgo',`${nf(f.rk,1)}/7 · volatilidad ${pc(f.vol)} · ${cm.l}`],['Peor escenario simulado',`${w[0]}: ${pc(w[1])}`],['Impacto de la inflación',`${E0(c.net)} nominales equivalen a ${E0(c.rn)} de hoy`],['Impacto fiscal',`${E0(c.gf-c.net)} (supuesto ${pc(S.tax,0)})`]];
+$('#rp').innerHTML='<h3>Informe educativo</h3><table>'+R.map(r=>`<tr><th>${r[0]}</th><td>${r[1]}</td></tr>`).join('')+'</table><p class="hint">Informe educativo: no es una recomendación de inversión.</p>';
+$('#ls').innerHTML='<h3>Lo que deberías haber aprendido</h3><ol>'+les().map(x=>`<li style="margin-bottom:8px">${x}</li>`).join('')+'</ol>'}
+function sync(){$$('[data-k]').forEach(e=>{if(document.activeElement!==e)e.value=S[e.dataset.k]});$$('[data-o]').forEach(o=>{const k=o.dataset.o,v=S[k];o.textContent=k==='yrs'?v+' años':['ret','inf','tax'].includes(k)?pc(v,k==='tax'?0:1):E0(v)});$$('[data-w]').forEach(e=>{if(e.tagName==='INPUT'){if(document.activeElement!==e)e.value=S.w[e.dataset.w]}else e.textContent=S.w[e.dataset.w]+' %'});$$('[data-sc]').forEach(b=>b.classList.toggle('on',b.dataset.sc===S.sc));$$('[data-i]').forEach(b=>b.classList.toggle('on',+b.dataset.i===S.inf));$('#sq').style.display=S.sc==='var'?'block':'none';const L=lvl();$('#lvl').textContent=`Nivel ${L.t} · retos ${L.n}/5`}
+function upd(){[[0,rq],[1,rp],[1,rc],[2,r3],[2,ri],[2,rf],[3,r4],[4,r5],[5,r6]].forEach(([m,f])=>{if(m===S.m||(m===1&&S.m===1))f()});sync()}
+function goM(n){S.m=n;$$('.mod').forEach((e,i)=>e.classList.toggle('on',i===n));$$('#nv button').forEach((b,i)=>b.classList.toggle('on',i===n));scrollTo(0,0);upd()}
+
+/* ===== INICIO Y EVENTOS ===== */
+$('#nv').innerHTML=['Conócete','Descubre','Simula','Construye','Pon a prueba tu cartera','Tu informe'].map((m,i)=>`<li><button data-m="${i}"><b>${i+1}</b>${m}</button></li>`).join('');
+$$('[data-sl]').forEach(d=>{const[k,l,a,b,s]=d.dataset.sl.split('|');d.innerHTML=`<label>${l} <output data-o="${k}"></output></label><input type="range" data-k="${k}" min="${a}" max="${b}" step="${s}">`});
+$('#sl6').innerHTML=KS.map(k=>`<label><span><i class="dot" style="background:${A[k].c}"></i>${A[k].n}</span><output data-w="${k}"></output></label><input type="range" min="0" max="100" step="1" data-w="${k}">`).join('');
+const PRE=[['Prudente',{liq:40,rf:45,rv:10,inm:0,oro:5,esp:0}],['Equilibrada',{liq:10,rf:35,rv:40,inm:5,oro:10,esp:0}],['Crecimiento',{liq:5,rf:15,rv:65,inm:10,oro:5,esp:0}],['Especulativa',{liq:0,rf:0,rv:40,inm:0,oro:10,esp:50}]];
+$('#pre').innerHTML='<p class="hint">Ejemplos para comparar (no son recomendaciones):</p>'+PRE.map((p,i)=>`<button class="chip" data-pre="${i}">${p[0]}</button>`).join('');
+document.addEventListener('input',e=>{const t=e.target,k=t.dataset.k;if(k){S[k]=t.tagName==='SELECT'||t.type==='text'?t.value:+t.value;upd()}else if(t.dataset.w&&t.tagName==='INPUT'){S.t.b=1;setW(t.dataset.w,+t.value);upd()}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const d=b.dataset;
+if(b.parentNode.classList.contains('tabs')){b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));$$(`.pane[data-g="${b.parentNode.dataset.g}"]`).forEach(p=>p.classList.toggle('on',p.dataset.t===b.dataset.t));upd();return}
+if(d.m!=null)return goM(+d.m);
+if(d.q!=null)S.q=+d.q;
+if(d.a!=null){const o=QS[S.q][2][+d.a];S.a[S.q]=+d.a;if(S.q===2)S.yrs=o[2];if(S.q===5)S.obj=o[0];S.q++}
+if(d.p)S.sel=d.p;
+if(d.c)S.cmp=S.cmp.includes(d.c)?S.cmp.filter(x=>x!==d.c):S.cmp.length<4?[...S.cmp,d.c]:S.cmp;
+if(d.sc)S.sc=d.sc;if(d.i)S.inf=+d.i;
+if(d.pre!=null){S.t.b=1;S.w={...PRE[+d.pre][1]}}
+if(d.s){S.sh=d.s;S.dec=null}if(d.d)S.dec=d.d;if(d.r)S.rs=d.r;if(d.r5!=null)S.d.r5=+d.r5===0?0:1;
+upd()});
+goM(0);
+</script></body></html>
